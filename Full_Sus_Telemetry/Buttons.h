@@ -22,22 +22,22 @@ String pause_m;
 // SETUP
 
 
-void pauseFunction(LED &led, String resume_message,  String pause_message) {
+void pauseFunction(LED &led, String resumeMessage,  String pauseMessage) {
     /**
     DESCRIPTION:
     pause or resume the recording.
 
     PARAMETERS:
     'led': the target LED instance.
-    'resume_message': the row to append when resumed (THE "\n" IS AUTOMATICALLY INCLUDED!)
-    'pause_message': the row to append when paused (SAME THING!)
+    'resumeMessage': the row to append when resumed (THE "\n" IS AUTOMATICALLY INCLUDED!)
+    'pauseMessage': the row to append when paused (SAME THING!)
     */
     
     if (state == "pause") {
         //Serial.println("resume");
 
-        if (resume_message != "") {
-          appendFile(resume_message + "\n");
+        if (resumeMessage != "") {
+          appendFile(resumeMessage + "\n");
         }
 
         state = "resume";
@@ -48,8 +48,8 @@ void pauseFunction(LED &led, String resume_message,  String pause_message) {
     if (state == "resume" || state == "start") {
         Serial.println("pause");
 
-        if (pause_message != "") {
-          appendFile(pause_message + "\n");
+        if (pauseMessage != "") {
+          appendFile(pauseMessage + "\n");
         }
         
         state = "pause";
@@ -73,7 +73,7 @@ void longHoldFunction(LED &led, String start_message, String stop_message) {
         ///Serial.println("start");
         
         state = "start";
-        start_recording(led);
+        startRecording(led);
         createFile(fileCount);
 
         if (start_message != "") {
@@ -106,8 +106,8 @@ void customise_buttonReading(String START_M, String STOP_M, String RESUME_M,  St
     
     'start_message': the row to append when started. 
     'stop_message': the row to append when stopped.
-    'resume_message': the row to append when resumed.
-    'pause_message': the row to append when paused.
+    'resumeMessage': the row to append when resumed.
+    'pauseMessage': the row to append when paused.
         NOTE: THE "\n" WILL BE AUTOMATICALLY INCLUDED!
     */
     

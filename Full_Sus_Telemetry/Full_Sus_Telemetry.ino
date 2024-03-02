@@ -10,9 +10,9 @@ const int buttonPin = 32;
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
-const int RPIN = 17;
-const int GPIN = 16;
-const int BPIN = 4;
+const int RPIN = 14;
+const int GPIN = 27;
+const int BPIN = 26;
 LED led; //initiates the LED object (documented in LED.h)
 
 // LINEAR POTENTIOMETER
@@ -28,10 +28,10 @@ float forkPosition;
 
 // SD CARD
 #include "SD_ReadWrite.h"
-#define MISO 19
+#define MISO 18
 #define SCK 23
-#define MOSI 18
-#define CS 5
+#define MOSI 19
+#define CS 22
 //int dateTime = 1;
 
 String startMessage = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
@@ -43,14 +43,14 @@ String recordingMessage;
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
-  Serial.begin(9600);
+  Serial.begin(2400);
   
   // LED
   led.create(RPIN, GPIN, BPIN);
 
   // BATTERY
   pinMode(batteryPin, INPUT);
-  float voltage = vibe_check(compensator, batteryPin);
+  float voltage = readVoltage(compensator, batteryPin);
   displayBattery(led, voltage); // shows battery status when turned on.
 
   // SD CARD
