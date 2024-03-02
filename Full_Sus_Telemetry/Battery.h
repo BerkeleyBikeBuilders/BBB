@@ -1,11 +1,12 @@
 #ifndef BATT_CHECK_H
 #define BATT_CHECK_H
 
-// Dependencies:
+// SETUP
 #include "LED.h"
+// SETUP
 
 
-float battery_factor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000){
+float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000) {
   /**
   DESCRIPTION:
   creates the factor for adjusting the reading voltage to the actual voltage.
@@ -17,10 +18,10 @@ float battery_factor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 10
   */
 
   float Rparallel = (Rinternal * R2) / (Rinternal + R2);
-  return ((Rparallel + R1) / Rparallel) * 0.0008058608; //0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
+  return ((Rparallel + R1) / Rparallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
 }
 
-float vibe_check(float factor, int batt_pin){
+float readVoltage(float factor, int batteryPin) {
   /**
   DESCRIPTION:
   measures the battery voltage while accounting for the
@@ -28,16 +29,16 @@ float vibe_check(float factor, int batt_pin){
 
   PARAMETERS:
   'factor': to adjust the voltage readings to the actual voltage.
-  'batt_pin': the input pin you are reading from.
+  'batteryPin': the input pin you are reading from.
   */
 
-  float voltage = analogRead(batt_pin);
+  float voltage = analogRead(batteryPin);
   float corrected_voltage = voltage * factor;
 
   return corrected_voltage;
 }
 
-void battery_display(LED &led, float voltage){
+void displayBattery(LED &led, float voltage, bool WarningOnly = false) {
   /**
   DESCRIPTION:
   lights up a chosen LED to display the battery health.
@@ -45,28 +46,31 @@ void battery_display(LED &led, float voltage){
   PARAMETERS:
   'led': the LED instance you want to use.
   'voltage': the voltage reading of the battery.
+  'WarningOnly': only shows battery status when it is low.
   */
 
-  float og_brightness = led.l;
+  float ogBrightness = led.getBrightness();
 
-  if (voltage < 2.8){
+  if (3.1 < voltage) {
+    if (WarningOnly) {
+      // displays nothing if 'WarningOnly' is true
+      return;
+    }
+    led.set('g');
+  } 
+  
+  else if ((2.8 <= voltage) && (voltage <= 3.1)) {
+    led.set('o');
+  } else {
     led.set('r');
   }
 
-  if ((2.8 <= voltage) && (voltage <= 3.1)){
-    led.set('o');
-  }
+  led.setBrightness(0);
+  led.fadeUp(200);
+  delay(900);
+  led.fadeDown(300);
 
-  if (3.1 < voltage){
-    led.set('g');
-  }
-
-  led.set_brightness(0);
-  led.fade_up(200);
-  delay(800);
-  led.fade_down(300);
-
-  led.set_brightness(og_brightness);
+  led.setBrightness(ogBrightness);
 }
 
 #endif

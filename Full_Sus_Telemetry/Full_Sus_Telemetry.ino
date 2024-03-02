@@ -1,85 +1,85 @@
-//BATTERY
+// BATTERY
 #include "Battery.h"
-const int Battery_pin = 16;
-const float compensator = battery_factor(); //the adjust for the internal impedance of the ESP board 
+const int batteryPin = 16;
+const float compensator = batteryFactor(); //this compensates for the voltage error from the ESP board's internal impedance
 
-//BUTTONS
+// BUTTONS
 #include "Buttons.h"
-const int Butt_pin = 33;
+const int buttonPin = 32;
 
-//LED
+// LED
 #include "LED.h"
 #include "LED_Behaviors.h"
 const int RPIN = 17;
 const int GPIN = 16;
 const int BPIN = 4;
-LED led;
+LED led; //initiates the LED object (documented in LED.h)
 
-//LINEAR POTENTIOMETER
+// LINEAR POTENTIOMETER
 #include "Potentiometer.h"
-LPOT fork_meter;
-const int fork_pin = 15;
-const float fork_length = 100;
+LPOT forkMeter;
+const int forkPin = 35;
+const float forkLength = 200;
 float forkPosition;
+//LPOT shock_meter;
+//const int shock_pin = 17;
+//const float shock_length = 200;
+//float shockPosition;
 
-LPOT shock_meter;
-const int shock_pin = 2;
-const float shock_length = 200;
-float shockPosition;
-
-//SD CARD
+// SD CARD
 #include "SD_ReadWrite.h"
-#define SCK 18
 #define MISO 19
-#define MOSI 23
+#define SCK 23
+#define MOSI 18
 #define CS 5
-// int dateTime = 1;
+//int dateTime = 1;
 
-String start_message = "Time,Shock Position,Fork Position"; //the "\n" is added via the function so new columns can be easily added.
-String stop_message = ""; //left empty for now
-String resume_message = "";
-String pause_message = "Paused, Paused, Paused";
-String recording_message;
+String startMessage = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
+String stopMessage = ""; // left empty for now
+String resumeMessage = "";
+String pauseMessage = "Paused, Paused";
+String recordingMessage;
 
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
   Serial.begin(9600);
   
-  //LED
+  // LED
   led.create(RPIN, GPIN, BPIN);
-  led.l = 0.05;
-  //reminding(led);
 
-  //BATTERY
-  pinMode(Battery_pin, INPUT);
-  float voltage = vibe_check(compensator, Battery_pin);
-  battery_display(led, voltage); //flashes the battery signal when turned on.
+  // BATTERY
+  pinMode(batteryPin, INPUT);
+  float voltage = vibe_check(compensator, batteryPin);
+  displayBattery(led, voltage); // shows battery status when turned on.
 
-  //SD CARD
-  SD_mount(SCK, MISO, MOSI, CS);
+  // SD CARD
+  while (!SD_mount(SCK, MISO, MOSI, CS)) {
+    thinking(led);
+  }
 
-  //BUTTON
-  pinMode(Butt_pin, INPUT);
+  // BUTTON
+  pinMode(buttonPin, INPUT);
+  customise_buttonReading(startMessage, stopMessage, resumeMessage, pauseMessage);
 
-  //LINEAR POTENTIOMETER
-  fork_meter.create(fork_pin, fork_length);
-  shock_meter.create(shock_pin, shock_length);
+  // LINEAR POTENTIOMETER
+  forkMeter.create(forkPin, forkLength);
+  //shock_meter.create(shock_pin, shock_length);
 }
 
 void loop() {
   // Add a delay to prevent too much output (optional)
   delay(10);
+  buttonReading(buttonPin, led);
+ 
 
-  buttonReading(Butt_pin, led, start_message, stop_message, resume_message, pause_message);
+  if (is_recording()) {
+   forkPosition = forkMeter.read();
+    Serial.println(forkPosition);
+   recordingMessage = String(millis() / 1000.0) + "," + String(forkPosition); // you can append new columns here
 
-  if (state == "start" || state == "resume"){
-   shockPosition = shock_meter.read();
-   forkPosition = fork_meter.read();
-   recording_message = String(millis() / 1000.0) + "," + String(shockPosition) + "," + String(forkPosition);
-
-   appendFile(recording_message + "\n");
-
-   // dateTime += 1;
+   appendFile(recordingMessage + "\n");
+  } else {
+    // while the device isn't doing anything memory-intensive: idk maybe check the battery level?
   }
 }

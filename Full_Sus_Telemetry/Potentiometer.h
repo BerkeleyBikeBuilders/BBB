@@ -1,60 +1,61 @@
 #ifndef POTENTIOMETER_H
 #define POTENTIOMETER_H
 
-// Dependencies:
+// SETUP
 #include "SD_ReadWrite.h"
+// SETUP
 
 
 class LPOT {
   public:
 
     int pin;
-    int maxV = 4095;
-    int zeroV = 0;
+    int maxVoltage = 4095;
+    int zeroVoltage = 0;
     float length; //the total length of touch surface in mm
     float V_per_mm;
 
 
-    void create(int P, float L, int ZEROV = 0, int MAXV = 4095){
+    void create(int P, float L, int zeroVoltage = 0, int maxVoltage = 4095) {
       /**
       DESCRIPTION:
       Stores the state in the LPOT linear potentiometer instance.
 
       PARAMTERS:
-      'time': (Optional) duration of the blinking; defaults to 1000 miliseconds.
-      'num': (Optional) the number of blinkds in the duration; defaults to 3.
-      'fade': (Optional) selects the fading option; defaults to false.
+      'P': the pin for measuring
+      'L': length of the potentiometer (in mm)
+      'zeroVoltage': (Optional) the voltage when the potentiometer is at minimum length
+      'maxVoltage': (Optional) the voltage when the potentiometer is at max length
       */
 
       pin = P;
       pinMode(pin, INPUT);
 
       length = L;
-      maxV = MAXV;
-      zeroV = ZEROV;
+      maxVoltage = maxVoltage;
+      zeroVoltage = zeroVoltage;
 
-      V_per_mm = (maxV-zeroV)/length;
+      V_per_mm = (maxVoltage - zeroVoltage) / length;
     }
 
-    float read(){
+    float read() {
       /**
       DESCRIPTION:
       Reads and returns the voltage from the potentiometer.
       */
 
-      float detectedV = analogRead(pin);
-      float rangeV = abs(maxV - zeroV); //abs in case you entered the values wrong
+      int detectedV = analogRead(pin);
 
-      return float((detectedV / rangeV) * length);
+      return (detectedV - zeroVoltage) / V_per_mm;
     }
 
-    void zero(){
+    void zero() {
       /**
       DESCRIPTION:
-      Zero the minimum voltage, and recalculate the voltage range based on it.
+      Zeros the minimum voltage; this won't affect the V_per_mm.
       */
 
-      zeroV = analogRead(pin);
+      zeroVoltage = analogRead(pin);
     }
 };
 

@@ -1,12 +1,12 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
-// Dependencies:
+// SETUP
 #include "LED_Behaviors.h"
 #include "SD_ReadWrite.h"
-
 // SETUP
-String state = "stop"; //'stop' 'start' 'pause' 'resume' 
+
+String state = "stop"; // "stop" "start" "pause" "resume"
 bool timerRunning = false;
 const int button_threshold = 3500;
 const int hold_t = 700;
@@ -14,6 +14,11 @@ const int hold_t = 700;
 long endTime;
 long startTime;
 long timeGap;
+
+String start_m;
+String stop_m;
+String resume_m;
+String pause_m;
 // SETUP
 
 
@@ -28,10 +33,10 @@ void pauseFunction(LED &led, String resume_message,  String pause_message) {
     'pause_message': the row to append when paused (SAME THING!)
     */
     
-    if (state == "pause"){
-        Serial.println("resume");
+    if (state == "pause") {
+        //Serial.println("resume");
 
-        if (resume_message != ""){
+        if (resume_message != "") {
           appendFile(resume_message + "\n");
         }
 
@@ -40,10 +45,10 @@ void pauseFunction(LED &led, String resume_message,  String pause_message) {
         return;
     }
     
-    if (state == "resume" || state == "start"){
+    if (state == "resume" || state == "start") {
         Serial.println("pause");
 
-        if (pause_message != ""){
+        if (pause_message != "") {
           appendFile(pause_message + "\n");
         }
         
@@ -64,22 +69,22 @@ void longHoldFunction(LED &led, String start_message, String stop_message) {
     'stop_message': the row to append when stopped (SAME THING!)
     */
 
-    if (state == "stop"){
-        Serial.println("start");
+    if (state == "stop") {
+        ///Serial.println("start");
         
         state = "start";
         start_recording(led);
         createFile(fileCount);
 
-        if (start_message != ""){
+        if (start_message != "") {
           appendFile(start_message + "\n");
         }
         return;
     }
 
-    if (state == "start" || state == "resume" || state == "pause"){
-        Serial.println("finished recording");
-        if (stop_message != ""){
+    if (state == "start" || state == "resume" || state == "pause") {
+        //Serial.println("stop");
+        if (stop_message != "") {
           appendFile(stop_message + "\n");
         }
 
@@ -89,10 +94,11 @@ void longHoldFunction(LED &led, String start_message, String stop_message) {
     }
 }
 
-void buttonReading(const int Butt_pin, LED &led, String start_message, String stop_message, String resume_message,  String pause_message){
+void customise_buttonReading(String START_M, String STOP_M, String RESUME_M,  String PAUSE_M) {
     /**
     DESCRIPTION:
-    checks if the button's pressed and its duration.
+    re-configure the custom messages for the different 
+    button presses.
 
     PARAMETERS:
     'Butt_pin': the input pin connected to the button.
@@ -102,7 +108,25 @@ void buttonReading(const int Butt_pin, LED &led, String start_message, String st
     'stop_message': the row to append when stopped.
     'resume_message': the row to append when resumed.
     'pause_message': the row to append when paused.
-        NOTE: THE "\n" IS AUTOMATICALLY INCLUDED!
+        NOTE: THE "\n" WILL BE AUTOMATICALLY INCLUDED!
+    */
+    
+    start_m = START_M;
+    stop_m = STOP_M;
+    resume_m = RESUME_M;
+    pause_m = PAUSE_M;
+}
+
+String buttonReading(const int Butt_pin, LED &led) {
+    /**
+    DESCRIPTION:
+    1: checks if the button's pressed and its duration, 
+    2: add messages to the data-collection table,
+    3: returns the updated recording state.
+
+    PARAMETERS:
+    'Butt_pin': the input pin connected to the button.
+    'led': the target LED instance.
     */
 
     int butVal = analogRead(Butt_pin); //record button value
@@ -115,21 +139,36 @@ void buttonReading(const int Butt_pin, LED &led, String start_message, String st
     endTime = millis();
     timeGap = endTime - startTime;
 
-    if (timeGap >= hold_t && timerRunning){      
-            longHoldFunction(led, start_message, stop_message);
-     
-            //waits while the button is still held down.
-            while (butVal >= button_threshold){
-                butVal = analogRead(Butt_pin);
-            }
+    if (timeGap >= hold_t && timerRunning) {      
+        longHoldFunction(led, start_m, stop_m);
+
+        // waits while the button is still held down.
+        while (butVal >= button_threshold) {
+            butVal = analogRead(Butt_pin);
         }
+      }
     
-    else if (butVal < button_threshold && timerRunning && state != "stop"){
-        pauseFunction(led, resume_message, pause_message);
+    else if (butVal < button_threshold && timerRunning && state != "stop") {
+        pauseFunction(led, resume_m, pause_m);
     } 
 
-    if (butVal < button_threshold){
-      timerRunning = false;
+    if (butVal < button_threshold) {
+    timerRunning = false;
+    }
+
+    return state;
+}
+
+bool is_recording() {
+    /**
+    DESCRIPTION:
+    returns if the device is recording data or not
+    */
+
+    if (state == "start" || state == "resume") {
+        return true;
+    } else {
+        return false;
     }
 }
 

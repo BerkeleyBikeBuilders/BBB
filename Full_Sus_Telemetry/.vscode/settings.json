@@ -1,0 +1,6 @@
+{
+    "files.associations": {
+        "central module": "cpp",
+        "peripheral module": "cpp"
+    }
+}

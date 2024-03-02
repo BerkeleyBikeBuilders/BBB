@@ -1,7 +1,7 @@
 #include "esp32-hal-spi.h"
 #include "Arduino.h"
-#ifndef SD_ReadWrite_H
-#define SD_ReadWrite_H
+#ifndef SD_CLASS_H
+#define SD_CLASS_H
 
 
 // SETUP
@@ -20,6 +20,7 @@ File dir;
 int fileCount = -1; // to keep track of the number of files
 // SETUP
 
+
 bool SD_mount(int SCK, int MISO, int MOSI, int CS) {
   spi.begin(SCK, MISO, MOSI, CS);
   // spi.setDataMode(SPI_MODE0);
@@ -33,6 +34,7 @@ bool SD_mount(int SCK, int MISO, int MOSI, int CS) {
     return true;
   }
 }
+
 
 int countFiles() {
   int tally = 0;
@@ -48,7 +50,7 @@ int countFiles() {
     entry = dir.openNextFile();
     if (!entry) {
       return tally;
-    } 
+    }
     tally += 1;
     entry.close();
   }
@@ -56,13 +58,13 @@ int countFiles() {
 
 void createFile(int fileCount) {
   fileCount = countFiles();
-  
+
   if (!SD.exists("/Telemetry")) {
     SD.mkdir("/Telemetry");
   }
 
   stringName = String("/Telemetry/data" + String(fileCount / 10) + String(fileCount % 10) + ".csv"); // the '/' is floor division for integers
-  
+
   stringName.toCharArray(filename, charArrayLen);
   dataFile = SD.open(filename, FILE_WRITE, true);
   delay(10);
