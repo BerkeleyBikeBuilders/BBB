@@ -10,9 +10,9 @@ const int buttonPin = 32;
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
-const int RPIN = 14;
-const int GPIN = 27;
-const int BPIN = 26;
+const int RPIN = 27;
+const int GPIN = 26;
+const int BPIN = 25;
 LED led; //initiates the LED object (documented in LED.h)
 
 // LINEAR POTENTIOMETER
@@ -43,7 +43,7 @@ String recordingMessage;
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
-  Serial.begin(2400);
+  Serial.begin(9600);
   
   // LED
   led.create(RPIN, GPIN, BPIN);

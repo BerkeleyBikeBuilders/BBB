@@ -69,6 +69,10 @@ class LPOT {
       */
       return id - linPot.id;
     }
+
+    int getID() {
+      return id;
+    }
 };
 
 #endif
