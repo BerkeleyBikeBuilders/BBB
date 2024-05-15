@@ -63,7 +63,7 @@ void setup() {
   battery_display(led, voltage); // shows battery status when turned on.
 
   // SD CARD
-  SD_mount(SCK, MISO, MOSI, CS);
+  sdMount(SCK, MISO, MOSI, CS);
 
   // BUTTON
   pinMode(Butt_pin, INPUT);
