@@ -33,7 +33,7 @@ float forkPosition;
 #define MOSI 23
 #define CS 18
 // int dateTime = 1;
-#define sdStatus 1 // use this pin to detect SD card during loop.
+//#define sdStatus 1 // use this pin to detect SD card during loop.
 
 String startMessage = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
 String stopMessage = "";                           // left empty for now
@@ -44,8 +44,7 @@ String recordingMessage;
 // MISC
 int sleepTimer = 0;
 
-void setup()
-{
+void setup() {
   // Initialize Serial communication at a baud rate of 115200
   Serial.begin(9600);
 
@@ -58,8 +57,7 @@ void setup()
   displayBattery(led, voltage); // shows battery status when turned on.
 
   // SD CARD
-  while (!sdMount(SCK, MISO, MOSI, CS))
-  {
+  while (!sdMount(SCK, MISO, MOSI, CS)) {
     thinking(led);
   } 
   confirm(led);
@@ -68,21 +66,19 @@ void setup()
 
   // BUTTON
   pinMode(buttonPin, INPUT);
-  customise_buttonReading(startMessage, stopMessage, resumeMessage, pauseMessage);
+  customiseButtonReading(startMessage, stopMessage, resumeMessage, pauseMessage);
 
   // LINEAR POTENTIOMETER
   forkMeter.create(forkPin, forkLength);
   // shock_meter.create(shock_pin, shock_length);
 }
 
-void loop()
-{
+void loop() {
   // Add a delay to prevent too much output (optional)
   delay(10);
   buttonReading(buttonPin, led);
 
-  if (is_recording())
-  {
+  if (isRecording()) {
     forkPosition = forkMeter.read();
     Serial.println(forkPosition);
     recordingMessage = String(millis() / 1000.0) + "," + String(forkPosition); // you can append new columns here
@@ -90,12 +86,10 @@ void loop()
     appendFile(recordingMessage + "\n");
     
     sleepTimer = 0;
-  }
-  else
-  {
+  } else {
   //   while the device isn't doing anything memory-intensive:
   sleepTimer++;
-  if (sleepTimer > 500000) {
+  if (sleepTimer > 50000) {
     esp_sleep_enable_ext0_wakeup(buttonPin, 1); // sleep until button is pressed
     ESP.restart();
   }

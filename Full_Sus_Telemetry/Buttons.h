@@ -21,8 +21,7 @@ String resume_m;
 String pause_m;
 // SETUP
 
-void pauseFunction(LED &led, String resumeMessage, String pauseMessage)
-{
+void pauseFunction(LED &led, String resumeMessage, String pauseMessage) {
     /**
     DESCRIPTION:
     pause or resume the recording.
@@ -33,12 +32,10 @@ void pauseFunction(LED &led, String resumeMessage, String pauseMessage)
     'pauseMessage': the row to append when paused (SAME THING!)
     */
 
-    if (state == "pause")
-    {
+    if (state == "pause") {
         // Serial.println("resume");
 
-        if (resumeMessage != "")
-        {
+        if (resumeMessage != "") {
             appendFile(resumeMessage + "\n");
         }
 
@@ -47,12 +44,10 @@ void pauseFunction(LED &led, String resumeMessage, String pauseMessage)
         return;
     }
 
-    if (state == "resume" || state == "start")
-    {
+    if (state == "resume" || state == "start") {
         Serial.println("pause");
 
-        if (pauseMessage != "")
-        {
+        if (pauseMessage != "") {
             appendFile(pauseMessage + "\n");
         }
 
@@ -62,8 +57,7 @@ void pauseFunction(LED &led, String resumeMessage, String pauseMessage)
     }
 }
 
-void longHoldFunction(LED &led, String start_message, String stop_message)
-{
+void longHoldFunction(LED &led, String start_message, String stop_message) {
     /**
     DESCRIPTION:
     starts or stops the recording.
@@ -74,26 +68,22 @@ void longHoldFunction(LED &led, String start_message, String stop_message)
     'stop_message': the row to append when stopped (SAME THING!)
     */
 
-    if (state == "stop")
-    {
+    if (state == "stop") {
         /// Serial.println("start");
 
         state = "start";
         startRecording(led);
         createFile(fileCount);
 
-        if (start_message != "")
-        {
+        if (start_message != "") {
             appendFile(start_message + "\n");
         }
         return;
     }
 
-    if (state == "start" || state == "resume" || state == "pause")
-    {
+    if (state == "start" || state == "resume" || state == "pause") {
         // Serial.println("stop");
-        if (stop_message != "")
-        {
+        if (stop_message != "") {
             appendFile(stop_message + "\n");
         }
 
@@ -103,8 +93,7 @@ void longHoldFunction(LED &led, String start_message, String stop_message)
     }
 }
 
-void customise_buttonReading(String START_M, String STOP_M, String RESUME_M, String PAUSE_M)
-{
+void customiseButtonReading(String START_M, String STOP_M, String RESUME_M, String PAUSE_M) {
     /**
     DESCRIPTION:
     re-configure the custom messages for the different
@@ -127,8 +116,7 @@ void customise_buttonReading(String START_M, String STOP_M, String RESUME_M, Str
     pause_m = PAUSE_M;
 }
 
-String buttonReading(const int Butt_pin, LED &led)
-{
+String buttonReading(const int Butt_pin, LED &led) {
     /**
     DESCRIPTION:
     1: checks if the button's pressed and its duration,
@@ -142,8 +130,7 @@ String buttonReading(const int Butt_pin, LED &led)
 
     int butVal = analogRead(Butt_pin); // record button value
 
-    if (butVal >= button_threshold && !timerRunning)
-    {
+    if (butVal >= button_threshold && !timerRunning) {
         startTime = millis();
         timerRunning = true;
     }
@@ -151,43 +138,35 @@ String buttonReading(const int Butt_pin, LED &led)
     endTime = millis();
     timeGap = endTime - startTime;
 
-    if (timeGap >= hold_t && timerRunning)
-    {
+    if (timeGap >= hold_t && timerRunning) {
         longHoldFunction(led, start_m, stop_m);
 
         // waits while the button is still held down.
-        while (butVal >= button_threshold)
-        {
+        while (butVal >= button_threshold) {
             butVal = analogRead(Butt_pin);
         }
     }
 
-    else if (butVal < button_threshold && timerRunning && state != "stop")
-    {
+    else if (butVal < button_threshold && timerRunning && state != "stop") {
         pauseFunction(led, resume_m, pause_m);
     }
 
-    if (butVal < button_threshold)
-    {
+    if (butVal < button_threshold) {
         timerRunning = false;
     }
 
     return state;
 }
 
-bool is_recording()
-{
+bool isRecording() {
     /**
     DESCRIPTION:
     returns if the device is recording data or not
     */
 
-    if (state == "start" || state == "resume")
-    {
+    if (state == "start" || state == "resume") {
         return true;
-    }
-    else
-    {
+    } else {
         return false;
     }
 }

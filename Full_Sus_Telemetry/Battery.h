@@ -5,8 +5,7 @@
 #include "LED.h"
 // SETUP
 
-float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000)
-{
+float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000) {
   /**
   DESCRIPTION:
   creates the factor for adjusting the reading voltage to the actual voltage.
@@ -21,8 +20,7 @@ float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 100
   return ((Rparallel + R1) / Rparallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
 }
 
-float readVoltage(float factor, int batteryPin)
-{
+float readVoltage(float factor, int batteryPin) {
   /**
   DESCRIPTION:
   measures the battery voltage while accounting for the
@@ -39,8 +37,7 @@ float readVoltage(float factor, int batteryPin)
   return corrected_voltage;
 }
 
-void displayBattery(LED &led, float voltage, bool WarningOnly = false)
-{
+void displayBattery(LED &led, float voltage, bool WarningOnly = false) {
   /**
   DESCRIPTION:
   lights up a chosen LED to display the battery health.
@@ -53,22 +50,17 @@ void displayBattery(LED &led, float voltage, bool WarningOnly = false)
 
   float ogBrightness = led.getBrightness();
 
-  if (3.1 < voltage)
-  {
-    if (WarningOnly)
-    {
+  if (3.1 < voltage) {
+    if (WarningOnly) {
       // displays nothing if 'WarningOnly' is true
       return;
     }
     led.set('g');
   }
 
-  else if ((2.8 <= voltage) && (voltage <= 3.1))
-  {
+  else if ((2.8 <= voltage) && (voltage <= 3.1)) {
     led.set('o');
-  }
-  else
-  {
+  } else {
     led.set('r');
   }
 

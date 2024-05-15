@@ -19,41 +19,33 @@ File dir;
 int fileCount = -1; // to keep track of the number of files
 // SETUP
 
-bool sdMount(int SCK, int MISO, int MOSI, int CS)
-{
+bool sdMount(int SCK, int MISO, int MOSI, int CS) {
   spi.begin(SCK, MISO, MOSI, CS);
   // spi.setDataMode(SPI_MODE0);
   // spi.begin(SCK, MISO, MOSI, CS);
 
-  if (!SD.begin(CS, spi, 80000000))
-  { // 4000000
+  if (!SD.begin(CS, spi, 80000000)) { // 4000000
     Serial.println("Card Mount Failed");
     return false;
-  }
-  else
-  {
+  } else {
     Serial.println("Card Mounted");
     return true;
   }
 }
 
-int countFiles()
-{
+int countFiles() {
   int tally = 0;
   // Open "Telemetry" directory
-  if (!SD.exists("/Telemetry"))
-  {
+  if (!SD.exists("/Telemetry")) {
     SD.mkdir("/Telemetry");
   }
 
   File dir = SD.open("/Telemetry");
   File entry;
 
-  while (true)
-  {
+  while (true) {
     entry = dir.openNextFile();
-    if (!entry)
-    {
+    if (!entry) {
       return tally;
     }
     tally += 1;
@@ -61,12 +53,10 @@ int countFiles()
   }
 }
 
-void createFile(int fileCount)
-{
+void createFile(int fileCount) {
   fileCount = countFiles();
 
-  if (!SD.exists("/Telemetry"))
-  {
+  if (!SD.exists("/Telemetry")) {
     SD.mkdir("/Telemetry");
   }
 
@@ -80,8 +70,7 @@ void createFile(int fileCount)
   dataFile.close();
 }
 
-void appendFile(String message)
-{
+void appendFile(String message) {
   /**
     DESCRIPTION:
     appends more text to the opened file.
@@ -94,17 +83,13 @@ void appendFile(String message)
   // Serial.printf("Appending to: %s\n", dataFile);
 
   File file = SD.open(filename, FILE_APPEND);
-  if (!file)
-  {
+  if (!file) {
     Serial.println("Can't open file for appending");
     return;
   }
-  if (file.print(message))
-  {
+  if (file.print(message)) {
     // Serial.println("Appended");
-  }
-  else
-  {
+  } else {
     // Serial.println("Append failed");
   }
   file.close();
