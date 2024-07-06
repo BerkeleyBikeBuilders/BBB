@@ -8,79 +8,107 @@ class LED {
   int bPin;
 
   char colour = 'w';
-  int r = 255;   // red value
-  int g = 255;   // green value
-  int b = 255;   // blue value
-  float l = 1.0; // 'lightness' idk
-  
+
+  // colour brightness adjustment modifiers:
+  float rBrightnessMod = 1.0;   
+  float gBrightnessMod = 1.0;   
+  float bBrightnessMod = 1.0;   
+
+  //the actual colour channels:
+  int r = 255;
+  int g = 255;
+  int b = 255;
+
+  float l = 1.0; // led 'lightness' (b for 'brightness' was taken so idk)
+
+
   public:            
 
-    void create(const int RPIN, const int GPIN, const int BPIN) {
+    void create(const int redPIN, const int greenPIN, const int bluePIN) {
       /**
       DESCRIPTION:
       stores the state in the LED instance.
 
       PAREMETERS:
-      'RPIN': red pin for LED.
-      'GPIN': green pin for LED.
-      'BPIN': blue pin for LED.
+      'redPIN': red pin for LED.
+      'greenPIN': green pin for LED.
+      'bluePIN': blue pin for LED.
       */
 
       // assign the pins
-      rPin = RPIN;
-      gPin = GPIN;
-      bPin = BPIN;
+      rPin = redPIN;
+      gPin = greenPIN;
+      bPin = bluePIN;
 
       // make them output pins
-      pinMode(RPIN, OUTPUT);
-      pinMode(GPIN, OUTPUT);
-      pinMode(BPIN, OUTPUT);
+      pinMode(redPIN, OUTPUT);
+      pinMode(greenPIN, OUTPUT);
+      pinMode(bluePIN, OUTPUT);
+    }
+
+    void calibrateBrightness(float redMaxB, float greenMaxB, float blueMaxB) {
+      /**
+      DESCRIPTION:
+      Legacy: just use physical resistors, idk how to make this work!
+
+      sets the brightness ceiling for each colour channel. Make sure the values are still between 0.0 - 1.0!
+      
+      PAREMETERS:
+      'redMax': the maximum value for the red channel (0.0 - 1.0) 
+      'greenMax': the maximum value for the green channel (0.0 - 1.0) 
+      'blueMax': the maximum value for the blue channel (0.0 - 1.0) 
+      */
+
+      rBrightnessMod = redMaxB;
+      gBrightnessMod = greenMaxB;
+      bBrightnessMod = blueMaxB;
     }
 
     float getBrightness() {
       return l;
     }
 
-    void set(char COLOUR) {
+    void set(char setColour) {
       /**
       DESCRIPTION:
       sets the LED object to store the state.
+      Note: the brightness modifiers rounds down the channel values.
 
       PAREMETERS:
-      'COLOUR': 'r' = red, 'g' = green 'b' = blue,
+      'setColour': 'r' = red, 'g' = green 'b' = blue,
                 'o' = orange, 'y' = yellow, 
                 'k' = black, 'w' = white
       */
 
-      colour = COLOUR;
+      colour = setColour;
       
-      switch(COLOUR) {
+      switch(setColour) {
             case 'r':  // red
-              r = 255; g = 0; b = 0;
+              r = 255 * rBrightnessMod;   g = 0 * gBrightnessMod;     b = 0 * bBrightnessMod;
               break;
               
             case 'b':  // blue
-              r = 0; g = 47; b = 255;
+              r = 0 * rBrightnessMod;     g = 47 * gBrightnessMod;    b = 255 * bBrightnessMod;
               break;
 
             case 'y':  // yellow
-              r = 255; g = 100; b = 0;
+              r = 255 * rBrightnessMod;   g = 100 * gBrightnessMod;   b = 0 * gBrightnessMod;
               break;
 
             case 'o':  // orange
-              r = 255; g = 40; b = 0;
+              r = 255 * rBrightnessMod;   g = 40 * gBrightnessMod;    b = 0 * gBrightnessMod;
               break;
 
             case 'g':  // green
-              r = 0; g = 255; b = 0;
+              r = 0 * rBrightnessMod;     g = 255 * gBrightnessMod;   b = 0 * gBrightnessMod;
               break;
 
             case 'k':  // black (off)
-              r = 0; g = 0; b = 0;
+              r = 0 * rBrightnessMod;     g = 0 * gBrightnessMod;     b = 0 * gBrightnessMod;
               break;
             
-            default: /// white or default, which is also white
-              r = 255; g = 255; b = 255;
+            default: /// white or default, which is still white
+              r = 255 * rBrightnessMod;   g = 255 * gBrightnessMod;   b = 255 * gBrightnessMod;
               break;
         }
     }
@@ -177,7 +205,7 @@ class LED {
         int rate = round(time / num * 0.85) + 1;
         int blink = round(time / num * 0.15) + 1;
 
-        // repeats 'num' times.
+        // blinks 'num' times.
         int _ = 0;
         while(_ < num) {
           OFF();

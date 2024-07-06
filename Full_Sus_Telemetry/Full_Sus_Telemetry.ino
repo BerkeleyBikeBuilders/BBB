@@ -10,9 +10,9 @@ const int buttonPin = 26;
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
-const int RPIN = 12;
-const int GPIN = 17;
-const int BPIN = 27;
+const int RPIN = 13;
+const int GPIN = 2;
+const int BPIN = 15;
 LED led; // initiates the LED object (documented in LED.h)
 
 // LINEAR POTENTIOMETER
@@ -28,10 +28,10 @@ float forkPosition;
 
 // SD CARD
 #include "SD_ReadWrite.h"
-#define MISO 22
-#define SCK 19
+#define MISO 19
+#define SCK 18
 #define MOSI 23
-#define CS 18
+#define CS 5
 // int dateTime = 1;
 //#define sdStatus 1 // use this pin to detect SD card during loop.
 
@@ -50,6 +50,7 @@ void setup() {
 
   // LED
   led.create(RPIN, GPIN, BPIN);
+  led.calibrateBrightness(0.3, 0.5, 0.5);
 
   // BATTERY
   pinMode(batteryPin, INPUT);
@@ -88,10 +89,10 @@ void loop() {
     sleepTimer = 0;
   } else {
   //   while the device isn't doing anything memory-intensive:
-  sleepTimer++;
-  if (sleepTimer > 50000) {
-    esp_sleep_enable_ext0_wakeup(buttonPin, 1); // sleep until button is pressed
-    ESP.restart();
+  // sleepTimer++;
+  // if (sleepTimer > 50000) {
+  //   esp_sleep_enable_ext0_wakeup(buttonPin, 1); // sleep until button is pressed
+  //   ESP.restart();
   }
 
 
