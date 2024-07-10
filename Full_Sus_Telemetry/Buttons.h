@@ -93,7 +93,7 @@ void longHoldFunction(LED &led, String start_message, String stop_message) {
     }
 }
 
-void customiseButtonReading(String START_M, String STOP_M, String RESUME_M, String PAUSE_M) {
+void customiseButtonMessage(String START_M, String STOP_M, String RESUME_M, String PAUSE_M) {
     /**
     DESCRIPTION:
     re-configure the custom messages for the different

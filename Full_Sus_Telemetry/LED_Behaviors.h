@@ -46,11 +46,11 @@ void reminding(LED &led) {
 
 void thinking(LED &led) {
   float ogBrightness = led.getBrightness();
-  led.fadeDown(200);
+  led.fadeDown(400);
   led.setBrightness(ogBrightness);
 
   led.set('w');
-  led.blink(800, 1, true);
+  led.blink(600, 1, true);
 }
 
 void confirm(LED &led) {

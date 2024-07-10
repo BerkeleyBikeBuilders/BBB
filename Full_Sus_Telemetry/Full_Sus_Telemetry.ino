@@ -5,13 +5,19 @@ const float compensator = batteryFactor(); // this compensates for the voltage e
 
 // BUTTONS
 #include "Buttons.h"
-const int buttonPin = 26;
+const int buttonPin = 27;
+// gpio_num_t buttonSleepPin = gpio_num_t(buttonPin);
+String startMessage = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
+String stopMessage = "";                           // left empty for now
+String resumeMessage = "";
+String pauseMessage = "Paused, Paused";
+String recordingMessage;
 
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
 const int RPIN = 13;
-const int GPIN = 2;
+const int GPIN = 4;
 const int BPIN = 15;
 LED led; // initiates the LED object (documented in LED.h)
 
@@ -35,14 +41,8 @@ float forkPosition;
 // int dateTime = 1;
 //#define sdStatus 1 // use this pin to detect SD card during loop.
 
-String startMessage = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
-String stopMessage = "";                           // left empty for now
-String resumeMessage = "";
-String pauseMessage = "Paused, Paused";
-String recordingMessage;
-
 // MISC
-int sleepTimer = 0;
+int sleepTimer = 0; // unused, was for putting idle device to sleep.
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
@@ -61,13 +61,14 @@ void setup() {
   while (!sdMount(SCK, MISO, MOSI, CS)) {
     thinking(led);
   } 
+  digitalWrite(LED_BUILTIN, HIGH);
   confirm(led);
 
   //pinMode(sdStatus, INPUT);
 
   // BUTTON
   pinMode(buttonPin, INPUT);
-  customiseButtonReading(startMessage, stopMessage, resumeMessage, pauseMessage);
+  customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage);
 
   // LINEAR POTENTIOMETER
   forkMeter.create(forkPin, forkLength);
@@ -78,6 +79,7 @@ void loop() {
   // Add a delay to prevent too much output (optional)
   delay(10);
   buttonReading(buttonPin, led);
+  Serial.println();
 
   if (isRecording()) {
     forkPosition = forkMeter.read();
@@ -88,13 +90,13 @@ void loop() {
     
     sleepTimer = 0;
   } else {
-  //   while the device isn't doing anything memory-intensive:
-  // sleepTimer++;
-  // if (sleepTimer > 50000) {
-  //   esp_sleep_enable_ext0_wakeup(buttonPin, 1); // sleep until button is pressed
-  //   ESP.restart();
+    //while the device isn't doing anything memory-intensive:
+    // sleepTimer++;
+    // if (sleepTimer > 50000) {
+    //   esp_sleep_enable_ext0_wakeup(buttonSleepPin, 1); // sleep until button is pressed
+    //   esp_deep_sleep_start();
+    // }
   }
-
 
   //   if (digitalRead(sdStatus) == HIGH)
   //   {
