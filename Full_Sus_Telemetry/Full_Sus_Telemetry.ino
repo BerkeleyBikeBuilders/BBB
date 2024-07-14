@@ -87,8 +87,7 @@ void loop() {
     recordingMessage = String(millis() / 1000.0) + "," + String(forkPosition); // you can append new columns here
 
     appendFile(recordingMessage + "\n");
-    
-    sleepTimer = 0;
+    // sleepTimer = 0;
   } else {
     //while the device isn't doing anything memory-intensive:
     // sleepTimer++;
