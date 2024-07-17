@@ -4,9 +4,9 @@
 #define SD_ReadWrite_H
 
 // SETUP
-#include "FS.h"
-#include "SD.h"
-#include "SPI.h"
+#include <FS.h>
+#include <SD.h>
+#include <SPI.h>
 
 SPIClass spi = SPIClass(VSPI);
 
