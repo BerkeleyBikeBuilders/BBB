@@ -18,9 +18,9 @@ String recordingMessage;
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
-const int RPIN = 13;
+const int RPIN = 4;
 const int GPIN = 2;
-const int BPIN = 4;
+const int BPIN = 13;
 LED led; // initiates the LED object
 
 // LINEAR POTENTIOMETER
