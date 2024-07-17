@@ -1,5 +1,5 @@
-#include "esp32-hal-spi.h"
-#include "Arduino.h"
+//#include "esp32-hal-spi.h"
+// #include "Arduino.h"
 #ifndef SD_ReadWrite_H
 #define SD_ReadWrite_H
 

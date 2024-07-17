@@ -1,6 +1,6 @@
 // BATTERY
 #include "Battery.h"
-const int batteryPin = 25;
+const int batteryPin = 15;
 const float compensator = batteryFactor(); // this compensates for the voltage error from the ESP board's internal impedance
 
 // BUTTONS
@@ -16,21 +16,29 @@ String recordingMessage;
 // LED
 #include "LED.h"
 #include "LED_Behaviors.h"
-const int RPIN = 13;
-const int GPIN = 4;
-const int BPIN = 15;
-LED led; // initiates the LED object (documented in LED.h)
+const int RPIN = 3;
+const int GPIN = 0;
+const int BPIN = 4;
+LED led; // initiates the LED object
 
 // LINEAR POTENTIOMETER
-#include "Potentiometer.h"
-LPOT forkMeter;
-const int forkPin = 35;
-const float forkLength = 200;
-float forkPosition;
+// #include "Potentiometer.h"
+// LPOT forkMeter;
+// const int forkPin = 35;
+// const float forkLength = 200;
+// float forkPosition;
 // LPOT shock_meter;
 // const int shock_pin = 17;
 // const float shock_length = 200;
 // float shockPosition;
+
+// EXPANSION BUS
+const int bus1 = 25;
+const int bus2 = 26;
+const int bus3 = 33;
+const int bus4 = 32;
+const int bus5 = 35;
+const int bus6 = 34;
 
 // SD CARD
 #include "SD_ReadWrite.h"
@@ -38,11 +46,8 @@ float forkPosition;
 #define SCK 18
 #define MOSI 23
 #define CS 5
-// int dateTime = 1;
-//#define sdStatus 1 // use this pin to detect SD card during loop.
 
 // MISC
-int sleepTimer = 0; // unused, was for putting idle device to sleep.
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
@@ -50,7 +55,7 @@ void setup() {
 
   // LED
   led.create(RPIN, GPIN, BPIN);
-  led.calibrateBrightness(0.3, 0.5, 0.5);
+  //led.calibrateBrightness(0.3, 0. 5, 0.5);
 
   // BATTERY
   pinMode(batteryPin, INPUT);
@@ -61,17 +66,14 @@ void setup() {
   while (!sdMount(SCK, MISO, MOSI, CS)) {
     thinking(led);
   } 
-  digitalWrite(LED_BUILTIN, HIGH);
   confirm(led);
-
-  //pinMode(sdStatus, INPUT);
 
   // BUTTON
   pinMode(buttonPin, INPUT);
   customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage);
 
   // LINEAR POTENTIOMETER
-  forkMeter.create(forkPin, forkLength);
+  //forkMeter.create(forkPin, forkLength);
   // shock_meter.create(shock_pin, shock_length);
 }
 
@@ -82,12 +84,11 @@ void loop() {
   Serial.println();
 
   if (isRecording()) {
-    forkPosition = forkMeter.read();
-    Serial.println(forkPosition);
-    recordingMessage = String(millis() / 1000.0) + "," + String(forkPosition); // you can append new columns here
+    //forkPosition = forkMeter.read();
+    //Serial.println(forkPosition);
+    recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // you can append new columns here
 
     appendFile(recordingMessage + "\n");
-    // sleepTimer = 0;
   } else {
     //while the device isn't doing anything memory-intensive:
     // sleepTimer++;

@@ -9,11 +9,6 @@ class LED {
 
   char colour = 'w';
 
-  // colour brightness adjustment modifiers:
-  float rBrightnessMod = 1.0;   
-  float gBrightnessMod = 1.0;   
-  float bBrightnessMod = 1.0;   
-
   //the actual colour channels:
   int r = 255;
   int g = 255;
@@ -46,24 +41,6 @@ class LED {
       pinMode(bluePIN, OUTPUT);
     }
 
-    void calibrateBrightness(float redMaxB, float greenMaxB, float blueMaxB) {
-      /**
-      DESCRIPTION:
-      Legacy: just use physical resistors, idk how to make this work!
-
-      sets the brightness ceiling for each colour channel. Make sure the values are still between 0.0 - 1.0!
-      
-      PAREMETERS:
-      'redMax': the maximum value for the red channel (0.0 - 1.0) 
-      'greenMax': the maximum value for the green channel (0.0 - 1.0) 
-      'blueMax': the maximum value for the blue channel (0.0 - 1.0) 
-      */
-
-      rBrightnessMod = redMaxB;
-      gBrightnessMod = greenMaxB;
-      bBrightnessMod = blueMaxB;
-    }
-
     float getBrightness() {
       return l;
     }
@@ -84,31 +61,31 @@ class LED {
       
       switch(setColour) {
             case 'r':  // red
-              r = 255 * rBrightnessMod;   g = 0 * gBrightnessMod;     b = 0 * bBrightnessMod;
+              r = 255;   g = 0;     b = 0;
               break;
               
             case 'b':  // blue
-              r = 0 * rBrightnessMod;     g = 47 * gBrightnessMod;    b = 255 * bBrightnessMod;
+              r = 0;     g = 47;    b = 255;
               break;
 
             case 'y':  // yellow
-              r = 255 * rBrightnessMod;   g = 100 * gBrightnessMod;   b = 0 * gBrightnessMod;
+              r = 255;   g = 100;   b = 0;
               break;
 
             case 'o':  // orange
-              r = 255 * rBrightnessMod;   g = 40 * gBrightnessMod;    b = 0 * gBrightnessMod;
+              r = 255;   g = 40;    b = 0;
               break;
 
             case 'g':  // green
-              r = 0 * rBrightnessMod;     g = 255 * gBrightnessMod;   b = 0 * gBrightnessMod;
+              r = 0;     g = 255;   b = 0;
               break;
 
             case 'k':  // black (off)
-              r = 0 * rBrightnessMod;     g = 0 * gBrightnessMod;     b = 0 * gBrightnessMod;
+              r = 0;     g = 0;     b = 0;
               break;
             
             default: /// white or default, which is still white
-              r = 255 * rBrightnessMod;   g = 255 * gBrightnessMod;   b = 255 * gBrightnessMod;
+              r = 255;   g = 255;   b = 255;
               break;
         }
     }
