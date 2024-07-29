@@ -9,7 +9,7 @@
 void startRecording(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.set('g');
+  led.set(GREEN);
   led.setBrightness(0.0);
   led.fadeUp(300, ogBrightness);
 
@@ -19,25 +19,25 @@ void startRecording(LED &led) {
 void stop_recording(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.colourFade(280, 'r');
+  led.colourFade(280, RED);
   led.fadeDown(200);
 
   led.setBrightness(ogBrightness);
-  led.OFF();
+  led.off();
 }
 
 void resume_recording(LED &led) {
-  led.colourFade(280, 'g');
+  led.colourFade(280, GREEN);
 }
 
 void pause_recording(LED &led) {
-  led.colourFade(280, 'y');
+  led.colourFade(280, YELLOW);
 }
 
 void reminding(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.set('w');
+  led.set(WHITE);
   led.setBrightness(1.0);
   led.blink(500, 2);
 
@@ -45,18 +45,14 @@ void reminding(LED &led) {
 }
 
 void thinking(LED &led) {
-  float ogBrightness = led.getBrightness();
-  led.fadeDown(400);
-  led.setBrightness(ogBrightness);
-
-  led.set('w');
+  led.set(WHITE);
   led.blink(600, 1, true);
 }
 
 void confirm(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.set('g');
+  led.set(GREEN);
   led.setBrightness(0.0);
   led.fadeUp(100, ogBrightness);
   delay(100);
@@ -68,12 +64,12 @@ void sleep(LED &led) {
   float ogBrightness = led.getBrightness();
 
   led.fadeUp(400);
-  led.colourFade(280, 'o');
+  led.colourFade(280, ORANGE);
   led.fadeDown(800,0.7);
   led.fadeDown(200);
 
   led.setBrightness(ogBrightness);
-  led.OFF();
+  led.off();
 }
 
 #endif

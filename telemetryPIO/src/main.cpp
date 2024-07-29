@@ -58,6 +58,7 @@ void setup() {
   // LED
   led.create(RPIN, GPIN, BPIN);
   //led.calibrateBrightness(0.3, 0. 5, 0.5);
+  led.setBrightness(0.1);
 
   // BATTERY
   pinMode(batteryPin, INPUT);
@@ -87,7 +88,6 @@ void loop() {
 
   if (isRecording()) {
     //forkPosition = forkMeter.read();
-    //Serial.println(forkPosition);
     recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // you can append new columns here
 
     appendFile(recordingMessage + "\n");

@@ -2,6 +2,7 @@
 #define BUTTONS_H
 
 // SETUP
+#include <Arduino.h>
 #include "LED_Behaviors.h"
 #include "SD_ReadWrite.h"
 // SETUP

@@ -1,23 +1,34 @@
 #ifndef LED_H
 #define LED_H
 
+#include <Arduino.h>
+
+typedef enum {
+  RED,
+  GREEN,
+  BLUE,
+  ORANGE,
+  YELLOW,
+  BLACK, //legacy, use off() or fadeDown instead
+  WHITE
+} Colour;     
+
 class LED {
 
   int rPin;
   int gPin;
   int bPin;
 
-  char colour = 'w';
-
   //the actual colour channels:
   int r = 255;
   int g = 255;
   int b = 255;
-
   float l = 1.0; // led 'lightness' (b for 'brightness' was taken so idk)
 
+  Colour colour = WHITE;    
 
-  public:            
+  public:   
+
 
     void create(const int redPIN, const int greenPIN, const int bluePIN) {
       /**
@@ -45,56 +56,49 @@ class LED {
       return l;
     }
 
-    void set(char setColour) {
+    void set(Colour setColour) {
       /**
       DESCRIPTION:
       sets the LED object to store the state.
       Note: the brightness modifiers rounds down the channel values.
 
       PAREMETERS:
-      'setColour': 'r' = red, 'g' = green 'b' = blue,
-                'o' = orange, 'y' = yellow, 
-                'k' = black, 'w' = white
+      'setColor': Colour enum value.
       */
 
       colour = setColour;
       
       switch(setColour) {
-            case 'r':  // red
-              r = 255;   g = 0;     b = 0;
-              break;
-              
-            case 'b':  // blue
-              r = 0;     g = 47;    b = 255;
-              break;
-
-            case 'y':  // yellow
-              r = 255;   g = 100;   b = 0;
-              break;
-
-            case 'o':  // orange
-              r = 255;   g = 40;    b = 0;
-              break;
-
-            case 'g':  // green
-              r = 0;     g = 255;   b = 0;
-              break;
-
-            case 'k':  // black (off)
-              r = 0;     g = 0;     b = 0;
-              break;
-            
-            default: /// white or default, which is still white
-              r = 255;   g = 255;   b = 255;
-              break;
-        }
+        case RED:
+          r = 255; g = 0; b = 0;
+          break;
+        case BLUE:
+          r = 0; g = 47; b = 255;
+          break;
+        case YELLOW:
+          r = 255; g = 100; b = 0;
+          break;
+        case ORANGE:
+          r = 255; g = 40; b = 0;
+          break;
+        case GREEN:
+          r = 0; g = 255; b = 0;
+          break;
+        case BLACK:
+          r = 0; g = 0; b = 0;
+          break;
+        case WHITE:
+        default:
+          r = 255; g = 255; b = 255;
+          break;
+      }
     }
 
-    void setBrightness(float light) {
-      l = light;
+    void setBrightness(float brightness) {
+      l = brightness;
     }
 
-    void ON() {
+    void on() {
       /**
       DESCRIPTION:
       turn the LED on but doesn't change the LED settings
@@ -104,7 +108,7 @@ class LED {
       analogWrite(bPin, round(b * l));
     }
 
-    void OFF() {
+    void off() {
       /**
       DESCRIPTION:
       turn the LED off, but doesn't change the LED settings
@@ -130,7 +134,7 @@ class LED {
           int rounded_time = abs(round(time / 100 / (l - brightness)));
 
           while (l >= brightness) {
-              ON();
+              on();
               l -= 0.01;
               delay(rounded_time);
           }
@@ -156,7 +160,7 @@ class LED {
           int rounded_time = abs(round(time / 100 / (l - brightness)));
 
           while (l <= brightness) {
-              ON();
+              on();
               l += 0.01;
               delay(rounded_time);
           }
@@ -185,15 +189,13 @@ class LED {
         // blinks 'num' times.
         int _ = 0;
         while(_ < num) {
-          OFF();
+          off();
           delay(blink);
-          ON();
+          on();
           delay(rate);
           _ += 1;
         }
-      }
-
-      else {
+      } else {
         // if the fade option is true, do this:
         int rate = round(time / num * 0.60) + 1;
         int blink = round(time / num * 0.40) + 1;
@@ -211,7 +213,7 @@ class LED {
 
     }
 
-    void colourFade(int time, char colour) {
+    void colourFade(int time, Colour colour) {
       /**
       DESCRIPTION:
       cross-fade to a different colour.
@@ -226,27 +228,27 @@ class LED {
       int b_final;
 
       switch(colour) {
-            case 'r':  // red
+            case RED:
               r_final = 255; g_final = 0; b_final = 0;
               break;
               
-            case 'b':  // blue
+            case BLUE:
               r_final = 0; g_final = 47; b_final = 255;
               break;
 
-            case 'y':  // yellow
+            case YELLOW:
               r_final = 255; g_final = 100; b_final = 0;
               break;
 
-            case 'o':  // orange
+            case ORANGE:
               r_final = 255; g_final = 40; b_final = 0;
               break;
 
-            case 'g':  // green
+            case GREEN:
               r_final = 0; g_final = 255; b_final = 0;
               break;
 
-            case 'k':  // black (off)
+            case BLACK: //off (legacy)
               r_final = 0; g_final = 0; b_final = 0;
               break;
             
@@ -281,7 +283,7 @@ class LED {
           b += db;
           b_diff -= 1;
         }
-        ON();
+        on();
         delay(dt);
       }
     }

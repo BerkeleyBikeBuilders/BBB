@@ -2,6 +2,7 @@
 #define BATT_CHECK_H
 
 // SETUP
+#include <Arduino.h>
 #include "LED.h"
 // SETUP
 
@@ -37,7 +38,7 @@ float readVoltage(float factor, int batteryPin) {
   return corrected_voltage;
 }
 
-void displayBattery(LED &led, float voltage, bool WarningOnly = false) {
+void displayBattery(LED &led, float voltage, bool warningOnly = false) {
   /**
   DESCRIPTION:
   lights up a chosen LED to display the battery health.
@@ -45,23 +46,23 @@ void displayBattery(LED &led, float voltage, bool WarningOnly = false) {
   PARAMETERS:
   'led': the LED instance you want to use.
   'voltage': the voltage reading of the battery.
-  'WarningOnly': only shows battery status when it is low.
+  'warningOnly': only shows battery status when it is low.
   */
 
   float ogBrightness = led.getBrightness();
 
   if (3.1 < voltage) {
-    if (WarningOnly) {
-      // displays nothing if 'WarningOnly' is true
+    if (warningOnly) {
+      // displays nothing if 'warningOnly' is true
       return;
     }
-    led.set('g');
+    led.set(GREEN);
   }
 
   else if ((2.8 <= voltage) && (voltage <= 3.1)) {
-    led.set('o');
+    led.set(ORANGE);
   } else {
-    led.set('r');
+    led.set(RED);
   }
 
   led.setBrightness(0);
