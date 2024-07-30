@@ -70,19 +70,19 @@ class LED {
       
       switch(setColour) {
         case RED:
-          r = 255; g = 0; b = 0;
+          r = 235; g = 77; b = 61; //r = 255; g = 0; b = 0;
           break;
         case BLUE:
-          r = 0; g = 47; b = 255;
+          r = 40; g = 95; b = 244; //r = 0; g = 47; b = 255;
           break;
         case YELLOW:
-          r = 255; g = 100; b = 0;
+          r = 247; g = 206; b = 70; //r = 255; g = 100; b = 0;
           break;
         case ORANGE:
-          r = 255; g = 40; b = 0;
+          r = 240; g = 148; b = 54; //r = 255; g = 40; b = 0;
           break;
         case GREEN:
-          r = 0; g = 255; b = 0;
+          r = 101; g = 196; b = 102; //r = 0; g = 255; b = 0;
           break;
         case BLACK:
           r = 0; g = 0; b = 0;
