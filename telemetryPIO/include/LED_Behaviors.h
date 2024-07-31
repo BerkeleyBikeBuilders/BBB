@@ -53,8 +53,8 @@ void thinking(LED &led) {
 void confirm(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.set(GREEN);
   led.setBrightness(0.0);
+  led.set(GREEN);
   led.fadeUp(100, ogBrightness);
   delay(100);
   led.fadeDown(300);

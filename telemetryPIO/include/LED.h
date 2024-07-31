@@ -15,6 +15,8 @@ typedef enum {
 
 class LED {
 
+  private:
+
   int rPin;
   int gPin;
   int bPin;
@@ -27,8 +29,85 @@ class LED {
 
   Colour colour = WHITE;    
 
-  public:   
+  //-------------------------Helper functions to shorten the code-----------------------
+    int* helperGetRGB(Colour colour) {
+      int red;
+      int blue;
+      int green;
 
+      switch(colour) {
+        case RED:
+          //red = 235; green = 77; blue = 61; 
+          red = 255; green = 10; blue = 0;
+          break;
+        case BLUE:
+          //red = 40; green = 95; blue = 244; 
+          red = 0; green = 47; blue = 255;
+          break;
+        case YELLOW:
+          red = 255; green = 255; blue = 0; 
+          //red = 255; green = 100; blue = 0;
+          break;
+        case ORANGE:
+          //red = 240; green = 148; blue = 54; 
+          red = 255; green = 100; blue = 0;
+          break;
+        case GREEN:
+          //red = 101; green = 196; blue = 102; 
+          red = 130; green = 255; blue = 0;
+          break;
+        case BLACK:
+          red = 0; green = 0; blue = 0;
+          break;
+        case WHITE:
+        default:
+          red = 255; green = 255; blue = 255;
+          break;
+      }
+
+      int* rgbValue = new int[3];
+      rgbValue[0] = red;
+      rgbValue[1] = green;
+      rgbValue[2] = blue;
+      return rgbValue;
+    }
+    
+    void helperColourFade(int time, int finalRed, int finalGreen, int finalBlue) {
+      int redDiff = abs(finalRed - r);
+      int greenDiff = abs(finalGreen - g);
+      int blueDiff = abs(finalBlue - b);
+
+      if (redDiff == 0 && greenDiff == 0 && blueDiff == 0) {
+        return;
+      }
+
+      const int dr = (finalRed - r) / redDiff;
+      const int dg = (finalGreen - g) / greenDiff;
+      const int db = (finalBlue - b) / blueDiff;
+
+      int dt = round(time / max({redDiff, greenDiff, blueDiff})) + 1;
+
+      while (max({redDiff, greenDiff, blueDiff}) > 0) {
+        if (redDiff > 0) {
+          r += dr;
+          redDiff -= 1;
+        }
+        if (greenDiff > 0) {
+          g += dg;
+          greenDiff -= 1;
+        }
+        if (blueDiff > 0) {
+          b += db;
+          blueDiff -= 1;
+        }
+        on();
+        delay(dt);
+      }
+    }
+  //------------------------------------------------------------------------------------
+
+
+  public:   
 
     void create(const int redPIN, const int greenPIN, const int bluePIN) {
       /**
@@ -56,43 +135,38 @@ class LED {
       return l;
     }
 
+    //----------------set methods-----------------
     void set(Colour setColour) {
       /**
       DESCRIPTION:
-      sets the LED object to store the state.
-      Note: the brightness modifiers rounds down the channel values.
+      sets the LED object to store the state. 
+      Note: this is an overloaded function.
 
       PAREMETERS:
       'setColor': Colour enum value.
       */
-
-      colour = setColour;
-      
-      switch(setColour) {
-        case RED:
-          r = 235; g = 77; b = 61; //r = 255; g = 0; b = 0;
-          break;
-        case BLUE:
-          r = 40; g = 95; b = 244; //r = 0; g = 47; b = 255;
-          break;
-        case YELLOW:
-          r = 247; g = 206; b = 70; //r = 255; g = 100; b = 0;
-          break;
-        case ORANGE:
-          r = 240; g = 148; b = 54; //r = 255; g = 40; b = 0;
-          break;
-        case GREEN:
-          r = 101; g = 196; b = 102; //r = 0; g = 255; b = 0;
-          break;
-        case BLACK:
-          r = 0; g = 0; b = 0;
-          break;
-        case WHITE:
-        default:
-          r = 255; g = 255; b = 255;
-          break;
-      }
+      int* colour = helperGetRGB(setColour);
+      r = colour[0];
+      g = colour[1];
+      b = colour[2];
     }
+
+    void set(int red, int green, int blue) {
+      /**
+      DESCRIPTION:
+      Sets the LED object to custom RGB colours, and stores the state.
+      Note: this is an overloaded function.
+
+      PAREMETERS:
+      'red' 0 - 255.
+      'green' 0 - 255.
+      'blue' 0 - 255.
+      */
+      r = red;
+      g = green;
+      b = blue;
+    }
+    //--------------------------------------------
 
     void setBrightness(float brightness) {
       l = brightness;
@@ -213,80 +287,40 @@ class LED {
 
     }
 
+    //----------------------------colourFade methods-------------------------------------
     void colourFade(int time, Colour colour) {
       /**
       DESCRIPTION:
       cross-fade to a different colour.
+      Note: this is an overloaded function.
 
       PARAMTERS:
       'time': duration of the cross-fade (in miliseconds).
       'colour': the colour you want to fade to.
       */
+      int* finalColour = helperGetRGB(colour);
+      int finalRed = finalColour[0];
+      int finalGreen = finalColour[1];
+      int finalBlue = finalColour[2];
 
-      int r_final;
-      int g_final;
-      int b_final;
-
-      switch(colour) {
-            case RED:
-              r_final = 255; g_final = 0; b_final = 0;
-              break;
-              
-            case BLUE:
-              r_final = 0; g_final = 47; b_final = 255;
-              break;
-
-            case YELLOW:
-              r_final = 255; g_final = 100; b_final = 0;
-              break;
-
-            case ORANGE:
-              r_final = 255; g_final = 40; b_final = 0;
-              break;
-
-            case GREEN:
-              r_final = 0; g_final = 255; b_final = 0;
-              break;
-
-            case BLACK: //off (legacy)
-              r_final = 0; g_final = 0; b_final = 0;
-              break;
-            
-            default: // do nothing if the colour is invalid
-              return;
-          }
-
-      int r_diff = abs(r_final - r);
-      int g_diff = abs(g_final - g);
-      int b_diff = abs(b_final - b);
-
-      if (r_diff == 0 && g_diff == 0 && b_diff == 0) {
-        return;
-      }
-
-      const int dr = (r_final - r) / r_diff;
-      const int dg = (g_final - g) / g_diff;
-      const int db = (b_final - b) / b_diff;
-
-      int dt = round(time / max({r_diff, g_diff, b_diff})) + 1;
-
-      while (max({r_diff, g_diff, b_diff}) > 0) {
-        if (r_diff > 0) {
-          r += dr;
-          r_diff -= 1;
-        }
-        if (g_diff > 0) {
-          g += dg;
-          g_diff -= 1;
-        }
-        if (b_diff > 0) {
-          b += db;
-          b_diff -= 1;
-        }
-        on();
-        delay(dt);
-      }
+      helperColourFade(time, finalRed, finalGreen, finalBlue);
     }
+
+    void colourFade(int time, int finalRed, int finalGreen, int finalBlue) {
+      /**
+      DESCRIPTION:
+      cross-fade to a different colour.
+      Note: this is an overloaded function.
+
+      PARAMTERS:
+      'time': duration of the cross-fade (in miliseconds).
+      'finalRed': Red channel of target colour.
+      'finalGreen': Green channel of target colour.
+      'finalBlue': Blue channel of target colour.
+      */
+      helperColourFade(time, finalRed, finalGreen, finalBlue);
+    }
+    //-----------------------------------------------------------------------------------
 };
 
 #endif
