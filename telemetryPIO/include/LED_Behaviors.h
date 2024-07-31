@@ -1,11 +1,10 @@
 #ifndef LED_BEHAVIOURS_H
 #define LED_BEHAVIOURS_H
 
-// SETUP
 #include <Arduino.h>
 #include "LED.h"
 #include "Buttons.h"
-// SETUP
+
 
 void startRecording(LED &led) {
   float ogBrightness = led.getBrightness();
@@ -20,7 +19,7 @@ void startRecording(LED &led) {
 void stop_recording(LED &led) {
   float ogBrightness = led.getBrightness();
 
-  led.colourFade(280, RED);
+  led.changeColour(280, RED);
   led.fadeDown(200);
 
   led.setBrightness(ogBrightness);
@@ -28,11 +27,11 @@ void stop_recording(LED &led) {
 }
 
 void resume_recording(LED &led) {
-  led.colourFade(280, GREEN);
+  led.changeColour(280, GREEN);
 }
 
 void pause_recording(LED &led) {
-  led.colourFade(280, YELLOW);
+  led.changeColour(280, YELLOW);
 }
 
 void reminding(LED &led) {
@@ -65,7 +64,7 @@ void sleep(LED &led) {
   float ogBrightness = led.getBrightness();
 
   led.fadeUp(400);
-  led.colourFade(280, ORANGE);
+  led.changeColour(280, ORANGE);
   led.fadeDown(800,0.7);
   led.fadeDown(200);
 

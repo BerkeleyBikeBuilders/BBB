@@ -3,6 +3,7 @@
 
 #include <Arduino.h>
 
+
 typedef enum {
   RED,
   GREEN,
@@ -20,17 +21,25 @@ class LED {
   int rPin;
   int gPin;
   int bPin;
-
-  //the actual colour channels:
+  Colour colour = WHITE;   
   int r = 255;
   int g = 255;
   int b = 255;
   float l = 1.0; // led 'lightness' (b for 'brightness' was taken so idk)
 
-  Colour colour = WHITE;    
-
-  //-------------------------Helper functions to shorten the code-----------------------
+  //--------------------------------Helper functions------------------------------------
     int* helperGetRGB(Colour colour) {
+      /**
+      DESCRIPTION:
+      Converts the colour to rgb values.
+
+      RETURNS:
+      length 3 integer array.
+
+      PARAMETERS:
+      'colour': RED, GREEN, BLUE, ORANGE, YELLOW, BLACK, WHITE
+      */
+
       int red;
       int blue;
       int green;
@@ -72,7 +81,19 @@ class LED {
       return rgbValue;
     }
     
-    void helperColourFade(int time, int finalRed, int finalGreen, int finalBlue) {
+    void helperChangeColour(int time, int finalRed, int finalGreen, int finalBlue) {
+      /**
+      DESCRIPTION:
+      Converts the colour to rgb values.
+
+      RETURNS:
+      length 3 integer array.
+
+      PARAMETERS:
+      'time': the time it takes to change colour
+      'colour': RED, GREEN, BLUE, ORANGE, YELLOW, BLACK, WHITE
+      */
+
       int redDiff = abs(finalRed - r);
       int greenDiff = abs(finalGreen - g);
       int blueDiff = abs(finalBlue - b);
@@ -287,8 +308,8 @@ class LED {
 
     }
 
-    //----------------------------colourFade methods-------------------------------------
-    void colourFade(int time, Colour colour) {
+    //----------------------------changeColour methods-------------------------------------
+    void changeColour(int time, Colour colour) {
       /**
       DESCRIPTION:
       cross-fade to a different colour.
@@ -303,10 +324,10 @@ class LED {
       int finalGreen = finalColour[1];
       int finalBlue = finalColour[2];
 
-      helperColourFade(time, finalRed, finalGreen, finalBlue);
+      helperChangeColour(time, finalRed, finalGreen, finalBlue);
     }
 
-    void colourFade(int time, int finalRed, int finalGreen, int finalBlue) {
+    void changeColour(int time, int finalRed, int finalGreen, int finalBlue) {
       /**
       DESCRIPTION:
       cross-fade to a different colour.
@@ -318,7 +339,7 @@ class LED {
       'finalGreen': Green channel of target colour.
       'finalBlue': Blue channel of target colour.
       */
-      helperColourFade(time, finalRed, finalGreen, finalBlue);
+      helperChangeColour(time, finalRed, finalGreen, finalBlue);
     }
     //-----------------------------------------------------------------------------------
 };

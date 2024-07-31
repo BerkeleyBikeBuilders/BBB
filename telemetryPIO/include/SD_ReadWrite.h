@@ -3,13 +3,11 @@
 #ifndef SD_ReadWrite_H
 #define SD_ReadWrite_H
 
-// SETUP
 #include <FS.h>
 #include <SD.h>
 #include <SPI.h>
 
 SPIClass spi = SPIClass(VSPI);
-
 #define charArrayLen 25            // raise this if the file path name grows
 char filename[charArrayLen] = {0}; // character array variable to store our converted date string for SD.open()
 String stringName = "";
@@ -17,7 +15,7 @@ String message;
 File dataFile;
 File dir;
 int fileCount = -1; // to keep track of the number of files
-// SETUP
+
 
 bool sdMount(int SCK, int MISO, int MOSI, int CS) {
   spi.begin(SCK, MISO, MOSI, CS);

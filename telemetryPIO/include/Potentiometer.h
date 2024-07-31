@@ -1,9 +1,7 @@
 #ifndef POTENTIOMETER_H
 #define POTENTIOMETER_H
 
-// SETUP
 #include "SD_ReadWrite.h"
-// SETUP
 
 
 class LPOT {

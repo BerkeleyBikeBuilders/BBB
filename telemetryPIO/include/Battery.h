@@ -1,10 +1,9 @@
 #ifndef BATT_CHECK_H
 #define BATT_CHECK_H
 
-// SETUP
 #include <Arduino.h>
 #include "LED.h"
-// SETUP
+
 
 float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000) {
   /**

@@ -1,5 +1,6 @@
 #include <Arduino.h>
 
+
 // BATTERY
 #include "Battery.h"
 const int batteryPin = 15;
@@ -48,8 +49,6 @@ const int bus6 = 34;
 #define SCK 18
 #define MOSI 23
 #define CS 5
-
-// MISC
 
 void setup() {
   // Initialize Serial communication at a baud rate of 115200
