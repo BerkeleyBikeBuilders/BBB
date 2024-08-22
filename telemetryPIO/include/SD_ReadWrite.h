@@ -76,20 +76,16 @@ void appendFile(String message) {
     PARAMETERS:
     'message': the line you want to insert.
   */
-
-  // message = String(dateTime) + "," + String(shockPosition) + "," + String(forkPosition) + "\n";
-  // Serial.printf("Appending to: %s\n", dataFile);
-
   File file = SD.open(filename, FILE_APPEND);
   if (!file) {
     Serial.println("Can't open file for appending");
     return;
   }
-  if (file.print(message)) {
-    // Serial.println("Appended");
-  } else {
-    // Serial.println("Append failed");
-  }
+  // if (file.print(message)) {
+  //   Serial.println("Appended");
+  // } else {
+  //   Serial.println("Append failed");
+  // }
   file.close();
 }
 

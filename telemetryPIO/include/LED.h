@@ -15,31 +15,26 @@ typedef enum {
 } Colour;     
 
 class LED {
-
   private:
 
   int rPin;
   int gPin;
   int bPin;
-  Colour colour = WHITE;   
+  Colour colour = WHITE; // LED defaults to white 
   int r = 255;
   int g = 255;
   int b = 255;
   float l = 1.0; // led 'lightness' (b for 'brightness' was taken so idk)
 
   //--------------------------------Helper functions------------------------------------
-    int* helperGetRGB(Colour colour) {
-      /**
-      DESCRIPTION:
-      Converts the colour to rgb values.
-
-      RETURNS:
-      length 3 integer array.
-
-      PARAMETERS:
-      'colour': RED, GREEN, BLUE, ORANGE, YELLOW, BLACK, WHITE
-      */
-
+    /**
+     * @brief Converts the Colour object to RGB values.
+     *
+     * @return A length 3 integer array representing the RGB values.
+     *
+     * @param colour The colour to convert. Options are: RED, GREEN, BLUE, ORANGE, YELLOW, BLACK, WHITE.
+     */
+    int* getColourRGB(Colour colour) {
       int red;
       int blue;
       int green;
@@ -54,7 +49,7 @@ class LED {
           red = 0; green = 47; blue = 255;
           break;
         case YELLOW:
-          red = 255; green = 255; blue = 0; 
+          red = 255; green = 200; blue = 0; 
           //red = 255; green = 100; blue = 0;
           break;
         case ORANGE:
@@ -62,8 +57,8 @@ class LED {
           red = 255; green = 100; blue = 0;
           break;
         case GREEN:
-          //red = 101; green = 196; blue = 102; 
-          red = 130; green = 255; blue = 0;
+          red = 90; green = 255; blue = 0; 
+          //red = 130; green = 255; blue = 0;
           break;
         case BLACK:
           red = 0; green = 0; blue = 0;
@@ -81,30 +76,26 @@ class LED {
       return rgbValue;
     }
     
-    void helperChangeColour(int time, int finalRed, int finalGreen, int finalBlue) {
-      /**
-      DESCRIPTION:
-      Converts the colour to rgb values.
-
-      RETURNS:
-      length 3 integer array.
-
-      PARAMETERS:
-      'time': the time it takes to change colour
-      'colour': RED, GREEN, BLUE, ORANGE, YELLOW, BLACK, WHITE
-      */
-
-      int redDiff = abs(finalRed - r);
-      int greenDiff = abs(finalGreen - g);
-      int blueDiff = abs(finalBlue - b);
+    /**
+     * @brief Converts the colour to RGB values with a cross-fade.
+     *
+     * @param time Duration of the cross-fade (in milliseconds).
+     * @param targetRed The final red channel value.
+     * @param targetGreen The target green channel value.
+     * @param targetBlue The target blue channel value.
+     */
+    void helperChangeColour(int time, int targetRed, int targetGreen, int targetBlue) {
+      int redDiff = abs(targetRed - r);
+      int greenDiff = abs(targetGreen - g);
+      int blueDiff = abs(targetBlue - b);
 
       if (redDiff == 0 && greenDiff == 0 && blueDiff == 0) {
         return;
       }
 
-      const int dr = (finalRed - r) / redDiff;
-      const int dg = (finalGreen - g) / greenDiff;
-      const int db = (finalBlue - b) / blueDiff;
+      const int dr = (targetRed - r) / redDiff;
+      const int dg = (targetGreen - g) / greenDiff;
+      const int db = (targetBlue - b) / blueDiff;
 
       int dt = round(time / max({redDiff, greenDiff, blueDiff})) + 1;
 
@@ -127,20 +118,16 @@ class LED {
     }
   //------------------------------------------------------------------------------------
 
-
   public:   
-
+    
+    /**
+     * @brief Stores the state in the LED instance.
+     *
+     * @param redPIN Red pin for the LED.
+     * @param greenPIN Green pin for the LED.
+     * @param bluePIN Blue pin for the LED.
+     */
     void create(const int redPIN, const int greenPIN, const int bluePIN) {
-      /**
-      DESCRIPTION:
-      stores the state in the LED instance.
-
-      PAREMETERS:
-      'redPIN': red pin for LED.
-      'greenPIN': green pin for LED.
-      'bluePIN': blue pin for LED.
-      */
-
       // assign the pins
       rPin = redPIN;
       gPin = greenPIN;
@@ -157,74 +144,69 @@ class LED {
     }
 
     //----------------set methods-----------------
+    /**
+     * @brief Sets the LED object to store the state.
+     * 
+     * @note This is an overloaded function.
+     *
+     * @param setColor Colour enum value.
+     */ 
     void set(Colour setColour) {
-      /**
-      DESCRIPTION:
-      sets the LED object to store the state. 
-      Note: this is an overloaded function.
-
-      PAREMETERS:
-      'setColor': Colour enum value.
-      */
-      int* colour = helperGetRGB(setColour);
+      int* colour = getColourRGB(setColour);
       r = colour[0];
       g = colour[1];
       b = colour[2];
     }
-
+    
+    /**
+     * @brief Sets the LED object to custom RGB colours and stores the state.
+     * 
+     * @note This is an overloaded function.
+     *
+     * @param red Red channel value (0 - 255).
+     * @param green Green channel value (0 - 255).
+     * @param blue Blue channel value (0 - 255).
+     */
     void set(int red, int green, int blue) {
-      /**
-      DESCRIPTION:
-      Sets the LED object to custom RGB colours, and stores the state.
-      Note: this is an overloaded function.
-
-      PAREMETERS:
-      'red' 0 - 255.
-      'green' 0 - 255.
-      'blue' 0 - 255.
-      */
       r = red;
       g = green;
       b = blue;
     }
     //--------------------------------------------
 
+    /**
+     * @brief sets and stores the LED brightness.
+     */
     void setBrightness(float brightness) {
       l = brightness;
     }
-
+    
+    /**
+     * @brief turn the LED on but doesn't change the LED settings.
+     */
     void on() {
-      /**
-      DESCRIPTION:
-      turn the LED on but doesn't change the LED settings
-      */
       analogWrite(rPin, round(r * l));
       analogWrite(gPin, round(g * l));
       analogWrite(bPin, round(b * l));
     }
-
+    /**
+     * @brief turn the LED off, but doesn't change the LED settings.
+     */
     void off() {
-      /**
-      DESCRIPTION:
-      turn the LED off, but doesn't change the LED settings
-      */
       analogWrite(rPin, 0);
       analogWrite(gPin, 0);
       analogWrite(bPin, 0);
     }
 
+    /**
+     * @brief Fades 'down' the LED to the desired brightness in the chosen time.
+     * 
+     * @note The function compensates for the starting brightness, so it always fades out in the specified time.
+     *
+     * @param time (Optional) Duration of the fade in milliseconds; defaults to 1000 milliseconds.
+     * @param brightness (Optional) The final brightness to stop at; defaults to 0.0.
+     */
     void fadeDown(int time = 1000, float brightness = 0.0) {
-      /**
-      DESCRIPTION:
-      Fades 'down' the LED to the desired brightness in (roughly) in the chosen time.
-
-      Note: the function compensates for the starting brightness, so it always fades out in time 'time'.
-
-      PARAMETERS:
-      'time': (Optional) in miliseconds; defaults to 1000 miliseconds.
-      'brightness': (Optional) the final brightness you want to stop at; defaults to 0.0.
-      */
-
       if(brightness < l) {
           int rounded_time = abs(round(time / 100 / (l - brightness)));
 
@@ -237,43 +219,36 @@ class LED {
       }
         
     }
-
-    void fadeUp(int time = 1000, float brightness = 1.0) {
-        /**
-        DESCRIPTION:
-        Fades 'up' the LED in (roughly) in the chosen time.
-        
-        Note: the function compensates for the starting brightness, so it always fades in in time 'time'.
-
-        PARAMETERS:
-        'time': (Optional) in miliseconds; defaults to 1000 miliseconds.
-        'brightness': (Optional) the final brightness you want to stop at; defaults to 1.0.
-        */
-
-
-        if(brightness > l) {
-          int rounded_time = abs(round(time / 100 / (l - brightness)));
-
-          while (l <= brightness) {
-              on();
-              l += 0.01;
-              delay(rounded_time);
-          }
-          l = brightness;
-        }
-    }
     
+    /**
+     * @brief Fades 'up' the LED to the desired brightness in the chosen time.
+     * 
+     * @note The function compensates for the starting brightness, so it always fades in within the specified time.
+     *
+     * @param time (Optional) Duration of the fade in milliseconds; defaults to 1000 milliseconds.
+     * @param brightness (Optional) The final brightness to stop at; defaults to 1.0.
+     */
+    void fadeUp(int time = 1000, float brightness = 1.0) {
+      if(brightness > l) {
+        int rounded_time = abs(round(time / 100 / (l - brightness)));
+
+        while (l <= brightness) {
+            on();
+            l += 0.01;
+            delay(rounded_time);
+        }
+        l = brightness;
+      }
+    }
+      
+    /**
+     * @brief Blinks the LED with the option of fading effects.
+     *
+     * @param time (Optional) Duration of the blinking in milliseconds; defaults to 1000 milliseconds.
+     * @param num (Optional) The number of blinks within the duration; defaults to 3.
+     * @param fade (Optional) Whether to apply a fading effect; defaults to false.
+     */
     void blink(int time = 1000, int num = 3, bool fade = false) {
-      /**
-      DESCRIPTION:
-      blinks the led, with the option of fading effects.
-
-      PARAMTERS:
-      'time': (Optional) duration of the blinking; defaults to 1000 miliseconds.
-      'num': (Optional) the number of blinkds in the duration; defaults to 3.
-      'fade': (Optional) selects the fading option; defaults to false.
-      */
-
       if (fade == false) {
         // if the fade option is not chosen, blink normally:
         
@@ -309,39 +284,33 @@ class LED {
     }
 
     //----------------------------changeColour methods-------------------------------------
+    /**
+     * @brief Cross-fades the LED to a different colour.
+     *
+     * @param time Duration of the cross-fade in milliseconds.
+     * @param colour The target colour to fade to.
+    */
     void changeColour(int time, Colour colour) {
-      /**
-      DESCRIPTION:
-      cross-fade to a different colour.
-      Note: this is an overloaded function.
+      int* finalColour = getColourRGB(colour);
+      int targetRed = finalColour[0];
+      int targetGreen = finalColour[1];
+      int targetBlue = finalColour[2];
 
-      PARAMTERS:
-      'time': duration of the cross-fade (in miliseconds).
-      'colour': the colour you want to fade to.
-      */
-      int* finalColour = helperGetRGB(colour);
-      int finalRed = finalColour[0];
-      int finalGreen = finalColour[1];
-      int finalBlue = finalColour[2];
-
-      helperChangeColour(time, finalRed, finalGreen, finalBlue);
+      helperChangeColour(time, targetRed, targetGreen, targetBlue);
     }
 
-    void changeColour(int time, int finalRed, int finalGreen, int finalBlue) {
-      /**
-      DESCRIPTION:
-      cross-fade to a different colour.
-      Note: this is an overloaded function.
-
-      PARAMTERS:
-      'time': duration of the cross-fade (in miliseconds).
-      'finalRed': Red channel of target colour.
-      'finalGreen': Green channel of target colour.
-      'finalBlue': Blue channel of target colour.
-      */
-      helperChangeColour(time, finalRed, finalGreen, finalBlue);
+    /**
+     * @brief Cross-fades the LED to a different colour by specifying RGB values.
+     *
+     * @param time Duration of the cross-fade in milliseconds.
+     * @param targetRed The final red channel value.
+     * @param targetGreen The final green channel value.
+     * @param targetBlue The final blue channel value.
+     */
+    void changeColour(int time, int targetRed, int targetGreen, int targetBlue) {
+      helperChangeColour(time, targetRed, targetGreen, targetBlue);
     }
-    //-----------------------------------------------------------------------------------
+    //-------------------------------------------------------------------------------------
 };
 
 #endif
