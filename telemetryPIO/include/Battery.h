@@ -4,72 +4,99 @@
 #include <Arduino.h>
 #include "LED.h"
 
+class BatteryVoltageSensor {
+  private:
 
-float batteryFactor(float R1 = 464, float R2 = 464, float Rinternal = 1388 * 1000) {
-  /**
-  DESCRIPTION:
-  creates the factor for adjusting the reading voltage to the actual voltage.
+    double voltageFactor = 0.0;       // To adjust for the resistors in the voltage reading
+    double R1 = 464.0;                // The resistor from Battery to GPIO (a part of the voltage divider)
+    double R2 = 464.0;                // The resistor from GPIO to GND (a part of the voltage divider)
+    double Rinternal = 1388 * 1000;   // The internal resistance from the connection between the GPIO and GND
+    int batteryPin;
 
-  PARAMETERS:
-  'R1': resistor connected in series with battery (ohms)
-  'R2': resistor connected in parallel with the board's I/O -> GND terminal (ohms)
-  'Rinternal': internal impedance through the I/O -> GND terminal (ohms)
-  */
-
-  float Rparallel = (Rinternal * R2) / (Rinternal + R2);
-  return ((Rparallel + R1) / Rparallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
-}
-
-float readVoltage(float factor, int batteryPin) {
-  /**
-  DESCRIPTION:
-  measures the battery voltage while accounting for the
-  internal impedance of the I/O pin.
-
-  PARAMETERS:
-  'factor': to adjust the voltage readings to the actual voltage.
-  'batteryPin': the input pin you are reading from.
-  */
-
-  float voltage = analogRead(batteryPin);
-  float corrected_voltage = voltage * factor;
-
-  return corrected_voltage;
-}
-
-void displayBattery(LED &led, float voltage, bool warningOnly = false) {
-  /**
-  DESCRIPTION:
-  lights up a chosen LED to display the battery health.
-
-  PARAMETERS:
-  'led': the LED instance you want to use.
-  'voltage': the voltage reading of the battery.
-  'warningOnly': only shows battery status when it is low.
-  */
-
-  float ogBrightness = led.getBrightness();
-
-  if (3.1 < voltage) {
-    if (warningOnly) {
-      // displays nothing if 'warningOnly' is true
-      return;
+  public:
+  
+    /**
+     * @brief Initialises the voltage-divider sensor.
+     * 
+     * @param Resistor1 The resistor connected in series with the battery (Ω).
+     * @param Resistor2 The resistor connected in parallel with the board's GPIO to the GND terminal (Ω).
+     * @param ResistorInternal The internal impedance from the GPIO to the GND terminal (measured to be 1.388MΩ).
+     */
+    void create(int BatteryPin, float Resistor1 = 464.0, float Resistor2 = 464.0, float ResistorInternal = 1388.0 * 1000.0) {
+      batteryPin = BatteryPin;
+      pinMode(batteryPin, INPUT);
+      R1 = Resistor1;
+      R2 = Resistor2;
+      Rinternal = ResistorInternal;
+      voltageFactor = adjustVoltage(R1, R2, Rinternal);
     }
-    led.set(GREEN);
+    
+    /**
+     * @brief Function to calculate the voltage adjustment factor.
+     * 
+     * @param Resistor1 The resistor from Battery to GPIO (Ω).
+     * @param Resistor2 The resistor from GPIO to GND (Ω).
+     * @param ResistorInternal The internal impedance from the GPIO to GND (measured to be 1.388MΩ).
+     * 
+     * @return The voltage adjustment factor.
+     */
+    double adjustVoltage(double Resistor1, double Resistor2, double ResistorInternal) {
+      float Rparallel = (ResistorInternal * Resistor2) / (ResistorInternal + Resistor2);
+      voltageFactor = ((Rparallel + Resistor1) / Rparallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
+      return voltageFactor;
+    }
+
+    /**
+     * @brief Gets the voltage adjustment factor.
+     * 
+     * @return The voltage adjustment factor.
+     */
+    double getVoltageFactor() {
+      return voltageFactor;
+    }
+
+    /**
+     * @brief Measures the battery voltage while accounting for the internal impedance of the I/O pin.
+     * 
+     * @param factor The adjustment factor to correct the voltage readings.
+     * @param batteryPin The input pin from which the voltage is being read.
+     * 
+     * @return The corrected battery voltage.
+     */
+    float readVoltage() {
+      float voltage = analogRead(batteryPin);
+      float corrected_voltage = voltage * voltageFactor;
+      return corrected_voltage;
+    }
+
+    /**
+     * @brief Lights up a chosen LED to display the battery health.
+     * 
+     * @param led The LED instance to be used.
+     * @param voltage The voltage reading of the battery.
+     * @param warningOnly If true, only shows battery status when it is low.
+     */
+    void displayBattery(LED &led, bool warningOnly = false) {
+      float initBrightness = led.getBrightness();
+      led.setBrightness(0);
+      
+      float voltage = readVoltage();
+      if (voltage > 3.1) {
+          if (warningOnly) {return;} // Displays nothing if 'warningOnly' is true
+          led.set(GREEN);
+
+      } else if (voltage >= 2.8 && voltage <= 3.1) {
+          led.set(ORANGE);
+
+      } else {
+          led.set(RED);
+      }
+      
+      led.fadeUp(200, initBrightness);
+      delay(900);
+      led.fadeDown(300);
+      led.setBrightness(initBrightness);
   }
-
-  else if ((2.8 <= voltage) && (voltage <= 3.1)) {
-    led.set(ORANGE);
-  } else {
-    led.set(RED);
-  }
-
-  led.setBrightness(0);
-  led.fadeUp(200);
-  delay(900);
-  led.fadeDown(300);
-
-  led.setBrightness(ogBrightness);
-}
+};
 
 #endif

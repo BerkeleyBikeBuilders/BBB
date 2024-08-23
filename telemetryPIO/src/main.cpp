@@ -1,70 +1,66 @@
 #include <Arduino.h>
 #include <driver/rtc_io.h>
 
-
-// POWER SUPPLY
-#include "Battery.h"
-const int batteryPin = 15;
-const float compensator = batteryFactor(); // this compensates for the voltage error from the ESP board's internal impedance
-
 // USER INTERFACE
 #include "Buttons.h"
 #include "LED.h"
 #include "LED_Behaviors.h"
-LED led; // initiates the LED object
+LED led; // Declares a global LED instance
+Button button; // Declares a global Button instance
 
-typedef enum {
-    BUTTON = GPIO_NUM_27,
-    RPIN   = 4,
-    GPIN   = 2,
-    BPIN   = 13,
-} UIpins;
+enum UserInterfacePins {
+  BUTTONPIN = 27,
+  RPIN = 4,
+  GPIN = 2,
+  BPIN = 13,
+};
 
-String startMessage  = "Time (secs),Fork Position"; // the "\n" is added via the function so new columns can be easily added.
-String stopMessage   = "";                           // left empty for now
-String resumeMessage = "";
-String pauseMessage  = "Paused, Paused";
-String recordingMessage; // ¯\_(ツ)_/¯
+// POWER SUPPLY
+#include "Battery.h"
+const int batteryPin = 15;
+BatteryVoltageSensor battery;
 
-// Going to Sleep:
+// Sleep:
 int sleepCounter = 0;
 
 // INPUT SOCKETS
-typedef enum {
-    PIN1 = 25,
-    PIN2 = 26,
-    PIN3 = 33,
-    PIN4 = 32,
-    PIN5 = 35,
-    PIN6 = 34,
-} InputSockets;
+enum InputSockets {
+  PIN1 = 25,
+  PIN2 = 26,
+  PIN3 = 33,
+  PIN4 = 32,
+  PIN5 = 35,
+  PIN6 = 34,
+};
 
 // SD CARD
 #include "SD_ReadWrite.h"
-typedef enum {
-    MISO = 19,
-    SCK  = 18,
-    MOSI = 23,
-    CS   = 5,
-} SDmodule;
+#define MISO 19
+#define SCK 18
+#define MOSI 23
+#define CS 5
+String startMessage  = "Time (secs),Fork Position";     // The "\n" are added in the methods, so new columns can be easily added.
+String stopMessage;
+String resumeMessage;
+String pauseMessage  = "Paused, Paused";               // Make sure that the number of commas is the same as the number of columns!
+String recordingMessage;
 
 void setup() {
-  Serial.begin(9600); // starts Serial communication
-
-  // POWER SUPPLY
-  pinMode(batteryPin, INPUT);
-  float voltage = readVoltage(compensator, batteryPin);
-  displayBattery(led, voltage); // shows battery status when turned on.
+  Serial.begin(9600); // Starts Serial communication.
 
   // USER INTERFACE
   led.create(RPIN, GPIN, BPIN);
-  //led.calibrateBrightness(0.3, 0. 5, 0.5);
-  pinMode(BUTTON, INPUT);
-  customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage);
+  //led.calibrateBrightness(0.8);
+  button.create(BUTTONPIN, led);
+  button.customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage); // The messages will be written into the csv file.
 
-  // Going to Sleep:
-  rtc_gpio_deinit((gpio_num_t) BUTTON); // revert the rtc_GPIO wake up pin back to a normal digital GPIO.
-  //sry I used casting... (◡︵◡')
+  // POWER SUPPLY
+  battery.create(batteryPin);
+  battery.displayBattery(led); // Shows battery status when turned on.
+
+  // Sleep:
+  rtc_gpio_deinit((gpio_num_t) BUTTONPIN); // Revert the rtc_GPIO wake up pin back to a normal (digital?) GPIO.
+  //sry I used casting...
 
   // INPUT SOCKETS
   pinMode(PIN1, INPUT);
@@ -84,33 +80,28 @@ void setup() {
 void loop() {
   // Add a delay to prevent too much output (optional)
   delay(10);
-  buttonReading(BUTTON, led);
-  Serial.println();
+  button.buttonReading();
+  
+  if (button.isRecording()) {
+    //Serial.println("Recording!");
 
-  if (isRecording()) {
     // *code to retrieve sensor data...*
-
-    recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // you can append new columns here.
+    recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
 
     appendFile(recordingMessage + "\n");
   } else {
+    //Serial.println("Not recording.");
+
+    idle(led);
+
     sleepCounter++;
-    if (sleepCounter > 60000) {
-      // about 60000 * 10 miliseconds = 10 minutes.
-      Serial.println("I'm going to sleep (=__=)");
-      delay(2000);
-      esp_sleep_enable_ext0_wakeup((gpio_num_t) BUTTON, HIGH); // assigning the button as the wake up pin. sry I used casting again.
+    if (sleepCounter > 18000) { // 18000 * ~10 miliseconds ≈ 3 minutes.
+      Serial.println("I'm going to sleep (=_=)");
+      sleep(led); // plays sleep animation
+      delay(100);
+
+      esp_sleep_enable_ext0_wakeup((gpio_num_t) BUTTONPIN, HIGH); // Assigning the button as the wake up pin. sry again for using casting.
       esp_deep_sleep_start();
     }
   }
-
-  //   if (digitalRead(sdStatus) == HIGH)
-  //   {
-  //     while (!sdMount(SCK, MISO, MOSI, CS))
-  //     {
-  //       thinking(led);
-  //     }
-  //     confirm(led);
-  //   }
-  // }
 }

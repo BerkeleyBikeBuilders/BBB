@@ -1,175 +1,198 @@
 #ifndef BUTTONS_H
 #define BUTTONS_H
 
-// SETUP
 #include <Arduino.h>
 #include "LED_Behaviors.h"
 #include "SD_ReadWrite.h"
-// SETUP
 
-String state = "stop"; // "stop" "start" "pause" "resume"
-bool timerRunning = false;
-const int button_threshold = 3500;
-const int hold_t = 700;
+// Enum for recording state
+enum RecordingState {
+    STOP,
+    START,
+    PAUSE,
+    RESUME
+};
 
-long endTime;
-long startTime;
-long timeGap;
+class Button {
+    private:
+        RecordingState state = STOP;
 
-String start_m;
-String stop_m;
-String resume_m;
-String pause_m;
-// SETUP
+        int buttonPin;
+        LED led;
 
-void pauseFunction(LED &led, String resumeMessage, String pauseMessage) {
-    /**
-    DESCRIPTION:
-    pause or resume the recording.
+        bool timerRunning = false;
+        const int buttonThreshold = 3000;
+        const int holdThreshold = 700;
 
-    PARAMETERS:
-    'led': the target LED instance.
-    'resumeMessage': the row to append when resumed (THE "\n" IS AUTOMATICALLY INCLUDED!)
-    'pauseMessage': the row to append when paused (SAME THING!)
-    */
+        long startTime = 0;
+        long endTime = 0;
+        long timeGap = 0;
 
-    if (state == "pause") {
-        // Serial.println("resume");
+        // Custom Messages
+        String startMsg = "";
+        String stopMsg = "";
+        String resumeMsg = "";
+        String pauseMsg = "";
 
-        if (resumeMessage != "") {
-            appendFile(resumeMessage + "\n");
+    public:
+        /**
+         * @brief Initialize the Button with the specified pins.
+         *
+         * @param redPIN Red pin for the LED.
+         * @param greenPIN Green pin for the LED.
+         * @param bluePIN Blue pin for the LED.
+         */
+        void create(int buttonPinout, LED &signalLED) {
+            buttonPin= buttonPinout;
+            led = signalLED;
+
+            pinMode(buttonPinout, INPUT);
         }
 
-        state = "resume";
-        resume_recording(led);
-        return;
-    }
+        /**
+         * @brief Pauses or resumes the recording.
+         * @param led The target LED instance.
+         * @param resumeMsg The message to append when resumed (newline is automatically included).
+         * @param pauseMsg The message to append when paused (newline is automatically included).
+         */
+        void pauseFunction(String resumeMsg, String pauseMsg) {
+            if (state == PAUSE) {
+                // Serial.println("resume");
 
-    if (state == "resume" || state == "start") {
-        Serial.println("pause");
+                if (!resumeMsg.isEmpty()) {
+                    appendFile(resumeMsg + "\n");
+                }
 
-        if (pauseMessage != "") {
-            appendFile(pauseMessage + "\n");
+                state = RESUME;
+                resume_recording(led);
+                return;
+            }
+
+            if (state == RESUME || state == START) {
+                Serial.println("pause");
+
+                if (!pauseMsg.isEmpty()) {
+                    appendFile(pauseMsg + "\n");
+                }
+
+                state = PAUSE;
+                pause_recording(led);
+                return;
+            }
         }
 
-        state = "pause";
-        pause_recording(led);
-        return;
-    }
-}
+        /**
+         * @brief Pauses or resumes the recording.
+         * @param led The target LED instance.
+         * @param resumeMsg The message to append when resumed (newline is automatically included).
+         * @param pauseMsg The message to append when paused (newline is automatically included).
+         */
+        void pauseFunction() {
+            if (state == PAUSE) {
+                if (!resumeMsg.isEmpty()) {
+                    appendFile(resumeMsg + "\n");
+                }
 
-void longHoldFunction(LED &led, String start_message, String stop_message) {
-    /**
-    DESCRIPTION:
-    starts or stops the recording.
+                state = RESUME;
+                resume_recording(led);
+            } else if (state == RESUME || state == START) {
+                if (!pauseMsg.isEmpty()) {
+                    appendFile(pauseMsg + "\n");
+                }
 
-    PARAMETERS:
-    'led': the target LED instance.
-    'start_message': the row to append when started (THE "\n" IS AUTOMATICALLY INCLUDED!)
-    'stop_message': the row to append when stopped (SAME THING!)
-    */
-
-    if (state == "stop") {
-        /// Serial.println("start");
-
-        state = "start";
-        startRecording(led);
-        createFile(fileCount);
-
-        if (start_message != "") {
-            appendFile(start_message + "\n");
-        }
-        return;
-    }
-
-    if (state == "start" || state == "resume" || state == "pause") {
-        // Serial.println("stop");
-        if (stop_message != "") {
-            appendFile(stop_message + "\n");
+                state = PAUSE;
+                pause_recording(led);
+            }
         }
 
-        state = "stop";
-        stop_recording(led);
-        return;
-    }
-}
+        /**
+         * @brief Starts or stops the recording.
+         * @param led The target LED instance.
+         * @param startMsg The message to append when started (newline is automatically included).
+         * @param stopMsg The message to append when stopped (newline is automatically included).
+         */
+        void longHoldFunction() {
+            if (state == STOP) {
+                state = START;
+                startRecording(led);
+                createFile();
 
-void customiseButtonMessage(String START_M, String STOP_M, String RESUME_M, String PAUSE_M) {
-    /**
-    DESCRIPTION:
-    re-configure the custom messages for the different
-    button presses.
+                if (!startMsg.isEmpty()) {
+                    appendFile(startMsg + "\n");
+                }
+            } else {
+                if (!stopMsg.isEmpty()) {
+                    appendFile(stopMsg + "\n");
+                }
 
-    PARAMETERS:
-    'Butt_pin': the input pin connected to the button.
-    'led': the target LED instance.
-
-    'start_message': the row to append when started.
-    'stop_message': the row to append when stopped.
-    'resumeMessage': the row to append when resumed.
-    'pauseMessage': the row to append when paused.
-        NOTE: THE "\n" WILL BE AUTOMATICALLY INCLUDED!
-    */
-
-    start_m = START_M;
-    stop_m = STOP_M;
-    resume_m = RESUME_M;
-    pause_m = PAUSE_M;
-}
-
-String buttonReading(const int Butt_pin, LED &led) {
-    /**
-    DESCRIPTION:
-    1: checks if the button's pressed and its duration,
-    2: add messages to the data-collection table,
-    3: returns the updated recording state.
-
-    PARAMETERS:
-    'Butt_pin': the input pin connected to the button.
-    'led': the target LED instance.
-    */
-
-    int butVal = analogRead(Butt_pin); // record button value
-
-    if (butVal >= button_threshold && !timerRunning) {
-        startTime = millis();
-        timerRunning = true;
-    }
-
-    endTime = millis();
-    timeGap = endTime - startTime;
-
-    if (timeGap >= hold_t && timerRunning) {
-        longHoldFunction(led, start_m, stop_m);
-
-        // waits while the button is still held down.
-        while (butVal >= button_threshold) {
-            butVal = analogRead(Butt_pin);
+                state = STOP;
+                stop_recording(led);
+            }
         }
-    }
 
-    else if (butVal < button_threshold && timerRunning && state != "stop") {
-        pauseFunction(led, resume_m, pause_m);
-    }
+        /**
+         * @brief Re-configures the custom messages for the different button presses.
+         * @param startMsg The message to append when started.
+         * @param stopMsg The message to append when stopped.
+         * @param resumeMsg The message to append when resumed.
+         * @param pauseMsg The message to append when paused.
+         */
+        void customiseButtonMessage(const String& startMessage, const String& stopMessage, const String& resumeMessage, const String& pauseMessage) {
+            startMsg = startMessage;
+            stopMsg = stopMessage;
+            resumeMsg = resumeMessage;
+            pauseMsg = pauseMessage;
+        }
 
-    if (butVal < button_threshold) {
-        timerRunning = false;
-    }
+        /**
+         * @brief Checks if the button is pressed and its duration, adds messages to the data-collection table, and returns the updated recording state.
+         * @param buttonPin The input pin connected to the button.
+         * @param led The target LED instance.
+         * @return The current recording state as a string.
+         */
+        String buttonReading() {
+            int buttonValue = analogRead(buttonPin); // Record button value
 
-    return state;
-}
+            if (buttonValue >= buttonThreshold && !timerRunning) {
+                startTime = millis();
+                timerRunning = true;
+            }
 
-bool isRecording() {
-    /**
-    DESCRIPTION:
-    returns if the device is recording data or not
-    */
+            endTime = millis();
+            timeGap = endTime - startTime;
 
-    if (state == "start" || state == "resume") {
-        return true;
-    } else {
-        return false;
-    }
-}
+            if (timeGap >= holdThreshold && timerRunning) {
+                longHoldFunction();
+
+                // Wait while the button is still held down.
+                while (analogRead(buttonPin) >= buttonThreshold) {
+                    delay(10);  // Avoid tight loops
+                }
+            } else if (buttonValue < buttonThreshold && timerRunning && state != STOP) {
+                pauseFunction();
+            }
+
+            if (buttonValue < buttonThreshold) {
+                timerRunning = false;
+            }
+
+            // Convert enum state to string for return
+            switch (state) {
+                case STOP: return "stop";
+                case START: return "start";
+                case PAUSE: return "pause";
+                case RESUME: return "resume";
+                default: return "unknown";
+            }
+        }
+
+        /**
+         * @brief Returns whether the device is currently recording data.
+         * @return True if recording, false otherwise.
+         */
+        bool isRecording() {
+            return (state == START || state == RESUME);
+        }
+};
 
 #endif

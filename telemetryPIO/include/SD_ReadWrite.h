@@ -1,5 +1,3 @@
-//#include "esp32-hal-spi.h"
-// #include "Arduino.h"
 #ifndef SD_ReadWrite_H
 #define SD_ReadWrite_H
 
@@ -7,86 +5,112 @@
 #include <SD.h>
 #include <SPI.h>
 
-SPIClass spi = SPIClass(VSPI);
-#define charArrayLen 25            // raise this if the file path name grows
-char filename[charArrayLen] = {0}; // character array variable to store our converted date string for SD.open()
-String stringName = "";
-String message;
-File dataFile;
-File dir;
-int fileCount = -1; // to keep track of the number of files
+// Define SPI interface and file handling variables
+SPIClass spi(VSPI);                             // Uses VSPI interface for SD cards
+constexpr int charArrayLen = 25;                 // Maximum file path length
+char filename[charArrayLen] = {0};               // Character array for file name
+String stringName = "";                          // String variable to store file name
+String message;                                  // String to hold the message to be written to the file
+File dataFile;                                   // File object for writing to the SD card
+int fileCount = 0;                               // Variable to keep track of the number of files
 
-
+/**
+ * @brief Mounts the SD card and initializes SPI communication.
+ *
+ * @param SCK The Serial Clock pin number.
+ * @param MISO The Master In Slave Out pin number.
+ * @param MOSI The Master Out Slave In pin number.
+ * @param CS The Chip Select pin number.
+ * @return true if the SD card is successfully mounted, false otherwise.
+ */
 bool sdMount(int SCK, int MISO, int MOSI, int CS) {
-  spi.begin(SCK, MISO, MOSI, CS);
-  // spi.setDataMode(SPI_MODE0);
-  // spi.begin(SCK, MISO, MOSI, CS);
+    spi.begin(SCK, MISO, MOSI, CS);
 
-  if (!SD.begin(CS, spi, 80000000)) { // 4000000
-    Serial.println("Card Mount Failed");
-    return false;
-  } else {
+    if (!SD.begin(CS, spi, 80000000)) {           // Initialize SD card at 80 MHz
+        Serial.println("ERROR: Failed to mount card, make sure it's formatted as MS-DOS (FAT32).");
+        return false;
+    }
     Serial.println("Card Mounted");
     return true;
-  }
 }
 
+/**
+ * @brief Counts the number of files in the "Telemetry" directory.
+ *
+ * @return The number of files in the "Telemetry" directory or -1 if an error occurred.
+ */
 int countFiles() {
-  int tally = 0;
-  // Open "Telemetry" directory
-  if (!SD.exists("/Telemetry")) {
-    SD.mkdir("/Telemetry");
-  }
-
-  File dir = SD.open("/Telemetry");
-  File entry;
-
-  while (true) {
-    entry = dir.openNextFile();
-    if (!entry) {
-      return tally;
+    if (!SD.exists("/Telemetry")) {
+        // Create directory if it doesn't exist
+        if (!SD.mkdir("/Telemetry")) {
+            Serial.println("ERROR: Failed to create /Telemetry directory.");
+            return -1;
+        }
     }
-    tally += 1;
-    entry.close();
-  }
+
+    int tally = 0;
+    File dir = SD.open("/Telemetry");
+    if (!dir) {
+        Serial.println("ERROR: Failed to open /Telemetry directory.");
+        return -1;
+    }
+
+    while (File entry = dir.openNextFile()) {     // Count the files in the directory
+        tally++;
+        entry.close();
+    }
+    dir.close();
+    return tally;
 }
 
-void createFile(int fileCount) {
-  fileCount = countFiles();
+/**
+ * @brief Creates a new file in the "Telemetry" directory with a unique name.
+ *
+ * @return true if the file was created successfully, false otherwise.
+ */
+bool createFile() {
+    fileCount = countFiles();
+    if (fileCount < 0) {
+        Serial.println("ERROR: Can't create file due to countFiles error.");
+        return false;
+    }
 
-  if (!SD.exists("/Telemetry")) {
-    SD.mkdir("/Telemetry");
-  }
+    stringName = "/Telemetry/data" + String(fileCount) + ".csv";
+    stringName.toCharArray(filename, charArrayLen);
+    
+    dataFile = SD.open(filename, FILE_WRITE);
+    if (!dataFile) {
+        Serial.println("ERROR: Failed to create new file.");
+        return false;
+    }
 
-  stringName = String("/Telemetry/data" + String(fileCount / 10) + String(fileCount % 10) + ".csv"); // the '/' is floor division for integers
-
-  stringName.toCharArray(filename, charArrayLen);
-  dataFile = SD.open(filename, FILE_WRITE, true);
-  delay(10);
-  Serial.print("New File: ");
-  Serial.println(stringName);
-  dataFile.close();
+    Serial.print("New file created: ");
+    Serial.println(stringName);
+    dataFile.close();
+    return true;
 }
 
-void appendFile(String message) {
-  /**
-    DESCRIPTION:
-    appends more text to the opened file.
+/**
+ * @brief Appends a message to the latest created file.
+ *
+ * @param message The line you want to insert into the file.
+ * @return true if the message was appended successfully, false otherwise.
+ */
+bool appendFile(const String& message) {
+    File file = SD.open(filename, FILE_APPEND);
+    if (!file) {
+        Serial.println("ERROR: Can't open file for appending.");
+        return false;
+    }
 
-    PARAMETERS:
-    'message': the line you want to insert.
-  */
-  File file = SD.open(filename, FILE_APPEND);
-  if (!file) {
-    Serial.println("Can't open file for appending");
-    return;
-  }
-  // if (file.print(message)) {
-  //   Serial.println("Appended");
-  // } else {
-  //   Serial.println("Append failed");
-  // }
-  file.close();
+    if (!file.print(message)) {
+        Serial.println("ERROR: Failed to append message to file.");
+        file.close();
+        return false;
+    }
+
+    file.close();
+    return true;
 }
 
 #endif
