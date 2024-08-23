@@ -1,3 +1,29 @@
+/**
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ * @file main.cpp                                                                  *
+ * @brief Code for the Telemetry Computer for the Bike Builders of Berkeley.       *
+ *                                                                                 *
+ * Hello! I hope you'll have as much fun working on this as I did!                 *
+ *                                                                                 *
+ * Started in Fall 2023, the Telemetry Computer will be transformed into a         *
+ * general, modular test platform to inform the new mountain bike design           *
+ * project in Fall 2024!                                                           *
+ *                                                                                 *
+ * Bike Builders of Berkeley is a student club at UC Berkeley.                     *
+ *                                                                                 *
+ * @author Kevin Ying, Ziven Posner                                                *
+ * @date 22 August, 2024                                                           *
+ *                                                                                 * 
+ * @details It relies on the Arduino core libraries and these custom header        * 
+ *          files:                                                                 *
+ *              Buttons.h                                                          *
+ *              LED.h                                                              *
+ *              LED_Behaviors.h                                                    *
+ *              Battery.h                                                          *
+ *              SD_ReadWrite.h                                                     *
+ * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * * *
+ */
+
 #include <Arduino.h>
 #include <driver/rtc_io.h>
 
@@ -50,7 +76,7 @@ void setup() {
 
   // USER INTERFACE
   led.create(RPIN, GPIN, BPIN);
-  //led.calibrateBrightness(0.8);
+  led.calibrateBrightness(0.05F);
   button.create(BUTTONPIN, led);
   button.customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage); // The messages will be written into the csv file.
 
@@ -80,10 +106,14 @@ void setup() {
 void loop() {
   // Add a delay to prevent too much output (optional)
   delay(10);
-  button.buttonReading();
+  Serial.println(button.buttonReading());
+
+
   
   if (button.isRecording()) {
     //Serial.println("Recording!");
+
+    sleepCounter = 0;
 
     // *code to retrieve sensor data...*
     recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
@@ -92,10 +122,8 @@ void loop() {
   } else {
     //Serial.println("Not recording.");
 
-    idle(led);
-
     sleepCounter++;
-    if (sleepCounter > 18000) { // 18000 * ~10 miliseconds ≈ 3 minutes.
+    if (sleepCounter > 6000) { // 6000 * ~10 miliseconds ≈ 1 minute.
       Serial.println("I'm going to sleep (=_=)");
       sleep(led); // plays sleep animation
       delay(100);

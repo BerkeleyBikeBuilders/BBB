@@ -26,7 +26,7 @@ int fileCount = 0;                               // Variable to keep track of th
 bool sdMount(int SCK, int MISO, int MOSI, int CS) {
     spi.begin(SCK, MISO, MOSI, CS);
 
-    if (!SD.begin(CS, spi, 80000000)) {           // Initialize SD card at 80 MHz
+    if (!SD.begin(CS, spi, 80000000)) {           // Initialise SD card at 80 MHz
         Serial.println("ERROR: Failed to mount card, make sure it's formatted as MS-DOS (FAT32).");
         return false;
     }
@@ -59,7 +59,7 @@ int countFiles() {
         tally++;
         entry.close();
     }
-    dir.close();
+    //dir.close();
     return tally;
 }
 
@@ -99,18 +99,18 @@ bool createFile() {
 bool appendFile(const String& message) {
     File file = SD.open(filename, FILE_APPEND);
     if (!file) {
-        Serial.println("ERROR: Can't open file for appending.");
+    Serial.println("Can't open file for appending");
         return false;
     }
-
-    if (!file.print(message)) {
-        Serial.println("ERROR: Failed to append message to file.");
+    if (file.print(message)) {
+        Serial.println("Appended");
+        file.close();
+        return true;
+    } else {
+        Serial.println("Append failed");
         file.close();
         return false;
     }
-
-    file.close();
-    return true;
 }
 
 #endif

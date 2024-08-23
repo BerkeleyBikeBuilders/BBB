@@ -22,7 +22,7 @@ class Button {
 
         bool timerRunning = false;
         const int buttonThreshold = 3000;
-        const int holdThreshold = 700;
+        const int holdTime = 700;
 
         long startTime = 0;
         long endTime = 0;
@@ -113,8 +113,8 @@ class Button {
          */
         void longHoldFunction() {
             if (state == STOP) {
-                state = START;
                 startRecording(led);
+                state = START;
                 createFile();
 
                 if (!startMsg.isEmpty()) {
@@ -151,7 +151,7 @@ class Button {
          * @return The current recording state as a string.
          */
         String buttonReading() {
-            int buttonValue = analogRead(buttonPin); // Record button value
+            int buttonValue = analogRead(buttonPin); // Record button value.
 
             if (buttonValue >= buttonThreshold && !timerRunning) {
                 startTime = millis();
@@ -161,14 +161,17 @@ class Button {
             endTime = millis();
             timeGap = endTime - startTime;
 
-            if (timeGap >= holdThreshold && timerRunning) {
+            if (timeGap >= holdTime && timerRunning) {
                 longHoldFunction();
 
-                // Wait while the button is still held down.
-                while (analogRead(buttonPin) >= buttonThreshold) {
+                // waits while the button is still held down.
+                while (buttonValue >= buttonThreshold) {
+                    buttonValue = analogRead(buttonPin);
                     delay(10);  // Avoid tight loops
                 }
-            } else if (buttonValue < buttonThreshold && timerRunning && state != STOP) {
+            }
+
+            else if (buttonValue < buttonThreshold && timerRunning && state != STOP) {
                 pauseFunction();
             }
 

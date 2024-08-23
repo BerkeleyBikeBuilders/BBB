@@ -6,7 +6,6 @@
 
 class BatteryVoltageSensor {
   private:
-
     double voltageFactor = 0.0;       // To adjust for the resistors in the voltage reading
     double R1 = 464.0;                // The resistor from Battery to GPIO (a part of the voltage divider)
     double R2 = 464.0;                // The resistor from GPIO to GND (a part of the voltage divider)
@@ -14,7 +13,6 @@ class BatteryVoltageSensor {
     int batteryPin;
 
   public:
-  
     /**
      * @brief Initialises the voltage-divider sensor.
      * 
@@ -95,7 +93,9 @@ class BatteryVoltageSensor {
       led.fadeUp(200, initBrightness);
       delay(900);
       led.fadeDown(300);
+      led.off();
       led.setBrightness(initBrightness);
+      delay(200);
   }
 };
 

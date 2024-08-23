@@ -3,7 +3,6 @@
 
 #include <Arduino.h>
 
-
 typedef enum {
   RED,
   GREEN,
@@ -16,7 +15,6 @@ typedef enum {
 
 class LED {
   private:
-
     int rPin;
     int gPin;
     int bPin;
@@ -24,8 +22,8 @@ class LED {
     int r = 255;
     int g = 255;
     int b = 255;
-    float l = 1.0; // led 'lightness' (b for 'brightness' was taken so idk)
-    float peakl = 1.0;
+    float l = 1.0F; // led 'lightness' (b for 'brightness' was taken so idk)
+    float peakl = 1.0F;
 
 
     //--------------------------------Helper functions start----------------------------------
@@ -100,7 +98,6 @@ class LED {
 
 
   public:   
-
     /**
      * @brief Initialises the LED with the specified pins.
      *
@@ -171,16 +168,16 @@ class LED {
      * @param brightness The brightness as a ratio of the peak brightness.
      */
     void setBrightness(float brightness) {
-        l = brightness * peakl;
+        l = constrain(brightness, 0.0F, 1.0F) ;
     }
 
     /**
      * @brief Turn on the LED with the current settings.
      */
     void on() const {
-        analogWrite(rPin, round(r * l));
-        analogWrite(gPin, round(g * l));
-        analogWrite(bPin, round(b * l));
+      analogWrite(rPin, constrain(round(r * l * peakl), 0, 255));
+      analogWrite(gPin, constrain(round(g * l * peakl), 0, 255));
+      analogWrite(bPin, constrain(round(b * l * peakl), 0, 255));
     }
 
     /**
@@ -203,6 +200,8 @@ class LED {
      * @note The function compensates for the starting brightness, so it always fades out in the specified time.
      */
     void fadeDown(int time, float brightness = 0.0F) {
+      brightness = constrain(brightness, 0.0F, 1.0F); // apply peak brightness multiplier
+
       if(brightness < l) {
           int rounded_time = abs(round(time / 100 / (l - brightness)));
 
@@ -224,7 +223,7 @@ class LED {
      * @note The function compensates for the starting brightness, so it always fades in within the specified time.
      */
     void fadeUp(int time, float brightness = 1.0F) {
-      brightness *= peakl; // converts it to a ratio of the peak brightness
+      brightness = constrain(brightness, 0.0F, 1.0F); // apply peak brightness multiplier
 
       if(brightness > l) {
         int rounded_time = abs(round(time / 100 / (l - brightness)));
@@ -247,8 +246,12 @@ class LED {
      * @param fade Whether to apply a fading effect.
      */
     void blink(int time = 1000, int num = 3, bool fade = false) {
-        int blinkOn = fade ? round(time / num * 0.40f) : round(time / num * 0.15f);
-        int blinkOff = fade ? round(time / num * 0.60f) : round(time / num * 0.85f);
+
+        int blinkOn = fade ? round(time / num * 0.40f) 
+                           : round(time / num * 0.15f);
+
+        int blinkOff = fade ? round(time / num * 0.60f) 
+                            : round(time / num * 0.85f);
 
         for (int i = 0; i < num; i++) {
             if (fade) {

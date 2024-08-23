@@ -54,31 +54,16 @@ void pause_recording(LED &led) {
 }
 
 /**
- * @brief Displays an idle animation by breathing the LED on/off in white.
- * 
- * @param led The LED instance to control.
- */
-void idle(LED &led) {
-  float initBrightness = led.getBrightness();
-
-  led.setBrightness(0.5);
-
-  led.set(WHITE);
-  led.fadeUp(1000);
-  led.fadeDown(1000);
-
-  led.setBrightness(initBrightness);
-}
-
-/**
  * @brief Shows a "thinking" animation by blinking the LED on/off in white.
  * 
  * @param led The LED instance to control.
  */
 void thinking(LED &led) {
   led.set(WHITE);
-  led.fadeUp(500);
-  led.fadeDown(1000);
+  led.on();
+  delay(800);
+  led.off();
+  delay(200);
 }
 
 /**
@@ -94,6 +79,7 @@ void confirm(LED &led) {
   led.fadeUp(100, initBrightness);
   delay(100);
   led.fadeDown(300);
+  led.off();
   led.setBrightness(initBrightness);
 }
 
@@ -104,13 +90,13 @@ void confirm(LED &led) {
  */
 void sleep(LED &led) {
   int initBrightness = led.getBrightness();
+  led.changeColour(500, WHITE);
 
-  led.off();
-  led.set(WHITE);
-
-  led.fadeUp(8000);
-  led.fadeDown(1000);
-  led.fadeUp(800, 0.5);
+  led.fadeDown(800);
+  led.fadeUp(800);
+  led.fadeDown(800);
+  delay(200);
+  led.fadeUp(800);
   led.fadeDown(1000);
 
   led.off();
