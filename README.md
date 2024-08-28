@@ -13,13 +13,13 @@ All the .h header files are stored in ./telemetryPIO/include
 
 ## Installation
 1. Clone the repository:
-    Go to the folder you want to clone to, and
+    Go to the folder you want to clone to, and:
     ```bash
-    git clone https://github.com/yourusername/yourproject.git
+    git clone https://github.com/pizzamouse/BBB-Software-Things.git
 
 2. Install IDE:
     Install Platform IO extension on VSCode. 
     If you prefer to use Arduino IDE, create a new Arduino project normally, copy-paste the code from src/main.cpp and the .h header files in /include
 
 3. install Libraries:
-    Get the Espressif ESP 32 board extension (somehow).
+    Install the Espressif ESP 32 board extension (somehow).
