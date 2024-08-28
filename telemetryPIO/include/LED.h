@@ -48,7 +48,7 @@ class LED {
             case ORANGE: return {255,  100,  0}; //{240, 148, 54}
             case YELLOW: return {255,  200,  0}; 
             case BLACK:  return {0,    0,    0};
-            case WHITE:  return {255,  255,  255};
+            case WHITE:
             default:     return {255,  255,  255};
         }
     }
@@ -71,14 +71,9 @@ class LED {
         }
 
         //calculates the colour step sizes (avoids 0 division)
-        int dr = (redDiff == 0)   ? 0 
-                                  : (targetRed - r) / redDiff;
-
-        int dg = (greenDiff == 0) ? 0 
-                                  : (targetGreen - g) / greenDiff;
-                                  
-        int db = (blueDiff == 0)  ? 0 
-                                  : (targetBlue - b) / blueDiff;
+        int dr = (redDiff == 0) ? 0 : (targetRed - r) / redDiff;
+        int dg = (greenDiff == 0) ? 0 : (targetGreen - g) / greenDiff;
+        int db = (blueDiff == 0) ? 0 : (targetBlue - b) / blueDiff;
 
         int dt = round(time / max({redDiff, greenDiff, blueDiff})) + 1;
 
@@ -250,16 +245,16 @@ class LED {
      * @param num The number of blinks.
      * @param fade Whether to apply a fading effect.
      */
-    void blink(int time = 1000, int num = 3, bool fadeOut = false) {
+    void blink(int time = 1000, int num = 3, bool fade = false) {
 
-        int blinkOn = fadeOut ? round(time / num * 0.40f) 
+        int blinkOn = fade ? round(time / num * 0.40f) 
                            : round(time / num * 0.15f);
 
-        int blinkOff = fadeOut ? round(time / num * 0.60f) 
+        int blinkOff = fade ? round(time / num * 0.60f) 
                             : round(time / num * 0.85f);
 
         for (int i = 0; i < num; i++) {
-            if (fadeOut) {
+            if (fade) {
                 float savedBrightness = l;
                 fadeDown(blinkOn);
                 fadeUp(blinkOn, savedBrightness);
