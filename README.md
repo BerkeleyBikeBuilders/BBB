@@ -36,8 +36,10 @@ All the .h header files are stored in ./telemetryPIO/include
 
 ## Debugging
 1. .............A fatal error occurred: No serial data received
+   
    Try Changing to upload speed to 115200
+   
    Try pressing the reset button, can also help clear processes that's preventing the upload (check your code).
 
-2. 
+3. 
 
