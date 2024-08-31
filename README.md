@@ -57,11 +57,7 @@ All the .h header files are stored in ./telemetryPIO/include
    
    Try pressing the reset button, can also help clear processes that's preventing the upload (check your code).
 
+![ESP32 WeMos LOLIN32 Lite Pinout](https://mischianti.org/wp-content/uploads/2021/07/ESP32-WeMos-LOLIN32-Lite-pinout-mischianti-low.jpg)
 
-
-
-
-
-https://mischianti.org/wp-content/uploads/2021/07/ESP32-WeMos-LOLIN32-Lite-pinout-mischianti-low.jpg
 
 
