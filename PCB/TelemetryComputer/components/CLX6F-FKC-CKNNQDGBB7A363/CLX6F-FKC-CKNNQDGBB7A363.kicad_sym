@@ -1,0 +1,154 @@
+
+(kicad_symbol_lib (version 20211014) (generator kicad_symbol_editor)
+  (symbol "CLX6F-FKC-CKNNQDGBB7A363" (pin_names (offset 1.016)) (in_bom yes) (on_board yes)
+    (property "Reference" "D" (id 0) (at -1.77882 9.14824 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Value" "CLX6F-FKC-CKNNQDGBB7A363" (id 1) (at -2.54115 -10.1646 0)
+      (effects (font (size 1.27 1.27)) (justify bottom left))
+    )
+    (property "Footprint" "CLX6F-FKC-CKNNQDGBB7A363:SOJ100P350X290-6N" (id 2) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "DigiKey_Part_Number" "CLX6F-FKC-CKNNQDGBB7A363TR-ND" (id 4) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MF" "Cree Inc." (id 5) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Purchase-URL" "https://www.snapeda.com/api/url_track_click_mouser/?unipart_id=641291&manufacturer=Cree Inc.&part_name=CLX6F-FKC-CKNNQDGBB7A363&search_term=None" (id 6) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Package" "PLCC-6 Cree" (id 7) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Check_prices" "https://www.snapeda.com/parts/CLX6F-FKC-CKNNQDGBB7A363/Cree+Inc./view-part/?ref=eda" (id 8) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "SnapEDA_Link" "https://www.snapeda.com/parts/CLX6F-FKC-CKNNQDGBB7A363/Cree+Inc./view-part/?ref=snap" (id 9) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MP" "CLX6F-FKC-CKNNQDGBB7A363" (id 10) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "Description" "\nRed, Green, Blue (RGB) 622nm Red, 530nm Green, 470nm Blue LED Indication - Discrete 2.1V Red, 2.7V Green, 3V Blue 6-SMD, J-Lead\n" (id 11) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (property "MANUFACTURER" "CREE" (id 12) (at 0 0 0)
+      (effects (font (size 1.27 1.27)) (justify bottom) hide)
+    )
+    (symbol "CLX6F-FKC-CKNNQDGBB7A363_0_0"
+      (polyline
+        (pts (xy 2.54 3.556) (xy 2.54 5.08)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 5.08) (xy 2.54 6.604)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 6.604) (xy 0.0 5.08)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 5.08) (xy 2.54 3.556)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 3.556) (xy 0.0 6.604)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -1.524) (xy 2.54 0.0)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 0.0) (xy 2.54 1.524)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 1.524) (xy 0.0 0.0)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 0.0) (xy 2.54 -1.524)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 -1.524) (xy 0.0 1.524)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -6.604) (xy 2.54 -5.08)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -5.08) (xy 2.54 -3.556)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -3.556) (xy 0.0 -5.08)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 -5.08) (xy 2.54 -6.604)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 0.0 -6.604) (xy 0.0 -3.556)) (stroke (width 0.254))
+      )
+      (polyline
+        (pts (xy 2.54 -5.08) (xy 5.08 -5.08)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 5.08 5.08) (xy 2.54 5.08)) (stroke (width 0.1524))
+      )
+      (polyline
+        (pts (xy 5.08 0.0) (xy 2.54 0.0)) (stroke (width 0.1524))
+      )
+      (text "RED" (at 0.254495 -3.05394 0)
+        (effects (font (size 0.814384 0.814384)) (justify bottom left))
+      )
+      (text "GREEN" (at 0.254035 2.03228 0)
+        (effects (font (size 0.812913 0.812913)) (justify bottom left))
+      )
+      (text "BLUE" (at 0.2542 7.11761 0)
+        (effects (font (size 0.813441 0.813441)) (justify bottom left))
+      )
+      (pin passive line (at -5.08 5.08 0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "1"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -5.08 0.0 0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "2"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at -5.08 -5.08 0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "3"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 10.16 -5.08 180.0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "4"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 10.16 0.0 180.0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "5"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+      (pin passive line (at 10.16 5.08 180.0) (length 5.08)
+        (name "~"
+          (effects (font (size 1.016 1.016)))
+        )
+        (number "6"
+          (effects (font (size 1.016 1.016)))
+        )
+      )
+    )
+  )
+)

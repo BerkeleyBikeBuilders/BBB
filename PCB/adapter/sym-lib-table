@@ -1,0 +1,5 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "2024-08-26_21-59-15")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6 3/2024-08-26_21-59-15.kicad_sym")(options "")(descr ""))
+  (lib (name "XT30PB")(type "Legacy")(uri "${KIPRJMOD}/components/LIB_XT30PB/XT30PB/KiCad/XT30PB.lib")(options "")(descr ""))
+)

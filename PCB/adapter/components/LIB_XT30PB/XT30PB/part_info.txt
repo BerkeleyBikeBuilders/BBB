@@ -1,0 +1,9 @@
+Manufacturer=Amass
+PartNumber=XT30PB
+PartCategory=Connector
+PackageCategory=Other
+PinCount=2
+Version=1.1
+Released=2020-01-15 12:35:32
+Downloaded=2024-10-15 23:50:41
+3D=Y

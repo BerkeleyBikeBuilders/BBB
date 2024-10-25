@@ -1,0 +1,10 @@
+(sym_lib_table
+  (version 7)
+  (lib (name "2024-08-26_17-59-16")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6/2024-08-26_17-59-16.kicad_sym")(options "")(descr ""))
+  (lib (name "2024-08-26_18-09-15")(type "KiCad")(uri "${KIPRJMOD}/components/JS202011JAQN/2024-08-26_18-09-15.kicad_sym")(options "")(descr ""))
+  (lib (name "CLX6F-FKC-CKNNQDGBB7A363")(type "KiCad")(uri "${KIPRJMOD}/components/CLX6F-FKC-CKNNQDGBB7A363/CLX6F-FKC-CKNNQDGBB7A363.kicad_sym")(options "")(descr ""))
+  (lib (name "2024-08-26_21-57-37")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6 2/2024-08-26_21-57-37.kicad_sym")(options "")(descr ""))
+  (lib (name "2024-08-26_21-59-15")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6 3/2024-08-26_21-59-15.kicad_sym")(options "")(descr ""))
+  (lib (name "2024-08-27_03-33-42")(type "KiCad")(uri "${KIPRJMOD}/components/OS102011MA1QN1/2024-08-27_03-33-42.kicad_sym")(options "")(descr ""))
+  (lib (name "EG1247")(type "Legacy")(uri "${KIPRJMOD}/components/EG1247-2/EG1247.lib")(options "")(descr ""))
+)

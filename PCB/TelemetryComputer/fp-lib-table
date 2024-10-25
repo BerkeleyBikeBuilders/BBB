@@ -1,0 +1,12 @@
+(fp_lib_table
+  (version 7)
+  (lib (name "footprints")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6/footprints.pretty")(options "")(descr ""))
+  (lib (name "d")(type "KiCad")(uri "${KIPRJMOD}/components/JS202011JAQN/footprints.pretty")(options "")(descr ""))
+  (lib (name "CLX6F-FKC-CKNNQDGBB7A363")(type "KiCad")(uri "${KIPRJMOD}/components/CLX6F-FKC-CKNNQDGBB7A363")(options "")(descr ""))
+  (lib (name "a")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6 2/footprints.pretty")(options "")(descr ""))
+  (lib (name "df")(type "KiCad")(uri "${KIPRJMOD}/components/KiCADv6 3/footprints.pretty")(options "")(descr ""))
+  (lib (name "KiCad")(type "KiCad")(uri "${KIPRJMOD}/components/KiCad")(options "")(descr ""))
+  (lib (name "fsdf")(type "KiCad")(uri "/Users/meli/Downloads/KiCADv6/footprints.pretty")(options "")(descr ""))
+  (lib (name "OS102011MA1QN1")(type "KiCad")(uri "${KIPRJMOD}/components/OS102011MA1QN1/footprints.pretty")(options "")(descr ""))
+  (lib (name "EG1247-2")(type "KiCad")(uri "${KIPRJMOD}/components/EG1247-2")(options "")(descr ""))
+)
