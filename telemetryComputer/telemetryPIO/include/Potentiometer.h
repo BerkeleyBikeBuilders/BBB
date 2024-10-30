@@ -14,7 +14,6 @@ class LPOT {
     int id; // to uniquely identify the potentiometer
 
   public:
-
     void create(int P, float L, int ZEROVOLTAGE = 0, int MAXVOLTAGE = 4095, int resistanceID = 0) {
       /**
       DESCRIPTION:
