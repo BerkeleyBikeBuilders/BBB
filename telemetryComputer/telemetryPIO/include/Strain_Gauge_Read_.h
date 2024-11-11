@@ -67,6 +67,6 @@ class STRAIN_GAUGES {
             
         }
     }
-}
+};
 
 #endif
