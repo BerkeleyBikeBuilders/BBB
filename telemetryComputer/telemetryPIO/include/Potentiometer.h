@@ -3,7 +3,6 @@
 
 #include "SD_ReadWrite.h"
 
-
 class LPOT {
 
     int pin;

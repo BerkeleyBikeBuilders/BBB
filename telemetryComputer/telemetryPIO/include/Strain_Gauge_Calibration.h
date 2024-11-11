@@ -1,5 +1,6 @@
 // Strain Gauge Calibration
-
+#ifndef STRAIN_GAUGE_CALIBRATION_H
+#define STRAIN_GAUGE_CALIBRATION_H
 
 #include <Arduino.h>
 
@@ -52,22 +53,4 @@ double convertStrainToStress(double strainGaugeOutput) {
     return calibrationConstant * (strainGaugeOutput - baselineStrain); // Adjusted strain
 }
 
-void setup() {
-    Serial.begin(115200);
-
-    // Initialize the tare function to zero the strain gauge at the start
-    tare();
-}
-
-void loop() {
-    // Continuously read and adjust the strain gauge output based on baseline
-    double currentStrain = readStrainGauge();
-    double adjustedStress = convertStrainToStress(currentStrain);
-
-    // Display the adjusted stress value
-    Serial.print("Adjusted Stress: ");
-    Serial.print(adjustedStress);
-    Serial.println(" N");
-
-    delay(100); // Adjust delay as needed for data sampling frequency
-}
+#endif
