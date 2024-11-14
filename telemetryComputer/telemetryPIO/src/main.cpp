@@ -31,6 +31,7 @@
 #include "Buttons.h"
 #include "LED.h"
 #include "LED_Behaviors.h"
+#include "Strain_Gauge_Calibration.h"
 LED led; // Declares a global LED instance
 Button button; // Declares a global Button instance
 
@@ -68,7 +69,7 @@ enum InputSockets {
 String startMessage  = "Time (secs),Fork Position";     // The "\n" are added in the methods, so new columns can be easily added.
 String stopMessage;
 String resumeMessage;
-String pauseMessage  = "Paused, Paused";               // Make sure that the number of commas is the same as the number of columns!
+String pauseMessage  = "Paused, Paused, Paused";       // Make sure that the number of commas is the same as the number of columns! 3 columns
 String recordingMessage;
 
 void setup() {
@@ -109,16 +110,18 @@ void loop() {
   Serial.println(button.buttonReading());
 
 
-  
+  //CSV file for one strain gauge will need to adjust for multiple gauges
   if (button.isRecording()) {
-    //Serial.println("Recording!");
-
+    Serial.println("Recording!");
     sleepCounter = 0;
 
-    // *code to retrieve sensor data...*
-    recordingMessage = String(millis() / 1000.0) + "," + String("data entry"); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
-
+    double currentStrain = readStrainGauge();
+    double adjustedStress = convertStrainToStress(currentStrain);
+   
+    recordingMessage = String(millis() / 1000.0) + "," + String(currentStrain) + "," + String(adjustedStress); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
     appendFile(recordingMessage + "\n");
+    
+   
   } else {
     //Serial.println("Not recording.");
 
