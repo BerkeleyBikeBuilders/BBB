@@ -69,7 +69,7 @@ enum InputSockets {
 String startMessage  = "Time (secs),Fork Position";     // The "\n" are added in the methods, so new columns can be easily added.
 String stopMessage;
 String resumeMessage;
-String pauseMessage  = "Paused, Paused, Paused";       // Make sure that the number of commas is the same as the number of columns! 3 columns
+String pauseMessage  = "Paused, Paused, Paused, Paused, Paused"; // Make sure that the number of commas is the same as the number of columns! 3 columns
 String recordingMessage;
 
 void setup() {
@@ -115,10 +115,18 @@ void loop() {
     Serial.println("Recording!");
     sleepCounter = 0;
 
-    double currentStrain = readStrainGauge();
-    double adjustedStress = convertStrainToStress(currentStrain);
-   
-    recordingMessage = String(millis() / 1000.0) + "," + String(currentStrain) + "," + String(adjustedStress); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
+    double currentStrain1 = readStrainGauge(strainPin1);
+    double adjustedStress1 = convertStrainToStress(currentStrain1, baselineStrain[0]);
+    double currentStrain2 = readStrainGauge(strainPin2);
+    double adjustedStress2 = convertStrainToStress(currentStrain2, baselineStrain[1]);
+    double currentStrain3 = readStrainGauge(strainPin3);
+    double adjustedStress3 = convertStrainToStress(currentStrain3, baselineStrain[2]);
+
+
+    recordingMessage = String(millis() / 1000.0) + "," + String(currentStrain1) + "," + String(adjustedStress1) + "," + 
+    String(currentStrain2) + "," + String(adjustedStress2) + "," +
+    String(currentStrain3) + "," + String(adjustedStress3); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
+    
     appendFile(recordingMessage + "\n");
     
    
