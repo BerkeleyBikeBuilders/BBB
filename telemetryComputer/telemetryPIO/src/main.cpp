@@ -11,7 +11,7 @@
  *                                                                                 *
  * Bike Builders of Berkeley is a student club at UC Berkeley.                     *
  *                                                                                 *
- * @author Kevin Ying, Ziven Posner                                                *
+ * @author Kevin Ying, Ziven Posner, Grant Hough                                   *
  * @date 22 August, 2024                                                           *
  *                                                                                 * 
  * @details It relies on the Arduino core libraries and these custom header        * 
@@ -136,7 +136,6 @@ void loop() {
     String(currentStrain3) + "," + String(adjustedStress3); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
     
     appendFile(recordingMessage + "\n");
-    
 
   } else {
     //Serial.println("Not recording.");
