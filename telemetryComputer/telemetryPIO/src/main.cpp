@@ -71,6 +71,8 @@ String stopMessage;
 String resumeMessage;
 String pauseMessage  = "Paused, Paused, Paused, Paused, Paused"; // Make sure that the number of commas is the same as the number of columns! 3 columns
 String recordingMessage;
+const int DELAY = 10; // optional delay between each run
+const int SLEEP_THRESHOLD = 6000; // 6000 * ~10 miliseconds ≈ 1 minute.
 
 void setup() {
   Serial.begin(9600); // Starts Serial communication.
@@ -90,12 +92,18 @@ void setup() {
   //sry I used casting...
 
   // INPUT SOCKETS
-  pinMode(PIN1, INPUT);
-  pinMode(PIN2, INPUT);
-  pinMode(PIN3, INPUT);
-  pinMode(PIN4, INPUT);
-  pinMode(PIN5, INPUT);
-  pinMode(PIN6, INPUT);
+
+
+  for (int pin = PIN1; pin <= PIN6; ++pin) {
+      pinMode(pin, INPUT);
+  }
+
+  // pinMode(PIN1, INPUT);
+  // pinMode(PIN2, INPUT);
+  // pinMode(PIN3, INPUT);
+  // pinMode(PIN4, INPUT);
+  // pinMode(PIN5, INPUT);
+  // pinMode(PIN6, INPUT);
 
   // SD CARD
   while (!sdMount(SCK, MISO, MOSI, CS)) {
@@ -106,9 +114,8 @@ void setup() {
 
 void loop() {
   // Add a delay to prevent too much output (optional)
-  delay(10);
+  delay(DELAY);
   Serial.println(button.buttonReading());
-
 
   //CSV file for one strain gauge will need to adjust for multiple gauges
   if (button.isRecording()) {
@@ -123,18 +130,19 @@ void loop() {
     double adjustedStress3 = convertStrainToStress(currentStrain3, baselineStrain[2]);
 
 
-    recordingMessage = String(millis() / 1000.0) + "," + String(currentStrain1) + "," + String(adjustedStress1) + "," + 
+    recordingMessage = String(millis() / 1000.0) + "," + 
+    String(currentStrain1) + "," + String(adjustedStress1) + "," + 
     String(currentStrain2) + "," + String(adjustedStress2) + "," +
     String(currentStrain3) + "," + String(adjustedStress3); // You can append new columns here (modify 'pauseMessage' line 21 if you do).
     
     appendFile(recordingMessage + "\n");
     
-   
+
   } else {
     //Serial.println("Not recording.");
 
     sleepCounter++;
-    if (sleepCounter > 6000) { // 6000 * ~10 miliseconds ≈ 1 minute.
+    if (sleepCounter > SLEEP_THRESHOLD) { 
       Serial.println("I'm going to sleep (=_=)");
       sleep(led); // plays sleep animation
       delay(100);
