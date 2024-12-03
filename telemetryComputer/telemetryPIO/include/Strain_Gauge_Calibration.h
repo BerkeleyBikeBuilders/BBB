@@ -4,46 +4,45 @@
 
 #include <Arduino.h>
 
-double baselineStrain[3] = {0.0, 0.0, 0.0}; // Variable to hold the zeroed strain value
-double calibrationConstant = 100.0; // Example calibration constant (update with actual calibration)
-const int strainPin1 = 35; // Analog pin connected to the strain gauge (I have no clue what the pinnings are lol)
-const int strainPin2 = 36; // What pin's do we want the other strain gauges on?
+// Constants and Globals
+const int strainPin1 = 35;
+const int strainPin2 = 36;
 const int strainPin3 = 39;
-
 const int numberStrainGauges = 3;
+const double calibrationConstant = 100.0; // Update with actual calibration value
+double baselineStrain[numberStrainGauges] = {0.0, 0.0, 0.0}; // Holds zeroed strain values
+
+// Strain gauge pins array for easier iteration
+const int strainPins[numberStrainGauges] = {strainPin1, strainPin2, strainPin3};
 
 /**
  * @brief Reads the current strain gauge output.
  * 
- * @return double - The raw strain gauge output as a voltage or strain unit.
+ * @param pin Analog pin connected to the strain gauge.
+ * @return double Raw strain gauge output as voltage or strain unit.
  */
-
-double readStrainGauge(int Pin) {
-    // For example, reading from an analog pin and scaling to a strain unit
-    return analogRead(Pin) * (3.3 / 1023.0); // Adjust as needed(what are we using?)
+double readStrainGauge(int pin) {
+    return analogRead(pin) * (3.3 / 1023.0); // Adjust scaling as needed
 }
 
 /**
- * @brief Sets the baseline strain to zero before a run by (averaging) multiple readings.
+ * @brief Sets the baseline strain to zero by averaging multiple readings.
  */
-
 void tare() {
-
-    const int sampleCount = 10; // Number of readings to average (can adjust)
+    const int sampleCount = 10; // Number of readings to average
 
     Serial.println("Taring Strain Gauges");
 
-    const int strainPins[] = {strainPin1, strainPin2, strainPin3};
-
-    // Take multiple readings to get a stable baseline
     for (int i = 0; i < numberStrainGauges; i++) {
         double sum = 0.0;
+
+        // Take multiple readings to stabilize the baseline
         for (int j = 0; j < sampleCount; j++) {
             sum += readStrainGauge(strainPins[i]);
-            delay(50); // Short delay between readings to stabilize
+            delay(50); // Delay between readings
         }
-    
-    // Calculate the average baseline value
+
+        // Calculate average baseline value
         baselineStrain[i] = sum / sampleCount;
 
         Serial.print("Baseline (zeroed) strain for gauge ");
@@ -56,12 +55,12 @@ void tare() {
 /**
  * @brief Converts the adjusted strain gauge output to stress.
  * 
- * @param strainGaugeOutput - The raw strain gauge output.
- * @return double - The adjusted stress value after calibration.
+ * @param strainGaugeOutput Raw strain gauge output.
+ * @param baseline Baseline strain value.
+ * @return double Adjusted stress value after calibration.
  */
-
 double convertStrainToStress(double strainGaugeOutput, double baseline) {
-    return calibrationConstant * (strainGaugeOutput - baseline); // Adjusted strain
+    return calibrationConstant * (strainGaugeOutput - baseline);
 }
 
 #endif

@@ -97,15 +97,6 @@ void setup() {
   for (int pin = PIN1; pin <= PIN6; ++pin) {
       pinMode(pin, INPUT);
   }
-
-  // pinMode(PIN1, INPUT);
-  // pinMode(PIN2, INPUT);
-  // pinMode(PIN3, INPUT);
-  // pinMode(PIN4, INPUT);
-  // pinMode(PIN5, INPUT);
-  // pinMode(PIN6, INPUT);
-
-  // SD CARD
   while (!sdMount(SCK, MISO, MOSI, CS)) {
     thinking(led);
   } 
@@ -138,8 +129,6 @@ void loop() {
     appendFile(recordingMessage + "\n");
 
   } else {
-    //Serial.println("Not recording.");
-
     sleepCounter++;
     if (sleepCounter > SLEEP_THRESHOLD) { 
       Serial.println("I'm going to sleep (=_=)");

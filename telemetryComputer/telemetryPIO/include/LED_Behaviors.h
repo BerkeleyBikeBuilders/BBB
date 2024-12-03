@@ -11,13 +11,13 @@
  * @param led The LED instance to control.
  */
 void startRecording(LED &led) {
-  float initBrightness = led.getBrightness();
+    float initBrightness = led.getBrightness();
 
-  led.set(GREEN);
-  led.setBrightness(0.0);
-  led.fadeUp(300, initBrightness);
+    led.set(GREEN);
+    led.setBrightness(0.0);
+    led.fadeUp(300, initBrightness);
 
-  led.setBrightness(initBrightness);
+    led.setBrightness(initBrightness);
 }
 
 /**
@@ -25,14 +25,14 @@ void startRecording(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void stop_recording(LED &led) {
-  float initBrightness = led.getBrightness();
+void stopRecording(LED &led) {
+    float initBrightness = led.getBrightness();
 
-  led.changeColour(280, RED);
-  led.fadeDown(200);
+    led.changeColour(280, RED);
+    led.fadeDown(200);
 
-  led.setBrightness(initBrightness);
-  led.off();
+    led.setBrightness(initBrightness);
+    led.off();
 }
 
 /**
@@ -40,8 +40,8 @@ void stop_recording(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void resume_recording(LED &led) {
-  led.changeColour(280, GREEN);
+void resumeRecording(LED &led) {
+    led.changeColour(280, GREEN);
 }
 
 /**
@@ -49,8 +49,8 @@ void resume_recording(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void pause_recording(LED &led) {
-  led.changeColour(280, YELLOW);
+void pauseRecording(LED &led) {
+    led.changeColour(280, YELLOW);
 }
 
 /**
@@ -58,12 +58,12 @@ void pause_recording(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void thinking(LED &led) {
-  led.set(WHITE);
-  led.on();
-  delay(800);
-  led.off();
-  delay(200);
+void showThinking(LED &led) {
+    led.set(WHITE);
+    led.on();
+    delay(800);
+    led.off();
+    delay(200);
 }
 
 /**
@@ -71,16 +71,16 @@ void thinking(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void confirm(LED &led) {
-  float initBrightness = led.getBrightness();
+void confirmAction(LED &led) {
+    float initBrightness = led.getBrightness();
 
-  led.setBrightness(0.0);
-  led.set(GREEN);
-  led.fadeUp(100, initBrightness);
-  delay(100);
-  led.fadeDown(300);
-  led.off();
-  led.setBrightness(initBrightness);
+    led.setBrightness(0.0);
+    led.set(GREEN);
+    led.fadeUp(100, initBrightness);
+    delay(100);
+    led.fadeDown(300);
+    led.off();
+    led.setBrightness(initBrightness);
 }
 
 /**
@@ -88,19 +88,19 @@ void confirm(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void sleep(LED &led) {
-  int initBrightness = led.getBrightness();
-  led.changeColour(500, WHITE);
+void showSleepAnimation(LED &led) {
+    int initBrightness = led.getBrightness();
+    led.changeColour(500, WHITE);
 
-  led.fadeDown(800);
-  led.fadeUp(800);
-  led.fadeDown(800);
-  delay(200);
-  led.fadeUp(800);
-  led.fadeDown(1000);
+    led.fadeDown(800);
+    led.fadeUp(800);
+    led.fadeDown(800);
+    delay(200);
+    led.fadeUp(800);
+    led.fadeDown(1000);
 
-  led.off();
-  led.setBrightness(initBrightness);
+    led.off();
+    led.setBrightness(initBrightness);
 }
 
 #endif

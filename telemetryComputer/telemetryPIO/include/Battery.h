@@ -6,42 +6,42 @@
 
 class BatteryVoltageSensor {
   private:
-    double voltageFactor = 0.0;       // To adjust for the resistors in the voltage reading
-    double R1 = 464.0;                // The resistor from Battery to GPIO (a part of the voltage divider)
-    double R2 = 464.0;                // The resistor from GPIO to GND (a part of the voltage divider)
-    double Rinternal = 1388 * 1000;   // The internal resistance from the connection between the GPIO and GND
-    int batteryPin;
+    double voltage_factor = 0.0;       // To adjust for the resistors in the voltage reading
+    double r1 = 464.0;                // The resistor from Battery to GPIO (a part of the voltage divider)
+    double r2 = 464.0;                // The resistor from GPIO to GND (a part of the voltage divider)
+    double rinternal = 1388 * 1000;   // The internal resistance from the connection between the GPIO and GND
+    int battery_pin;
 
   public:
     /**
      * @brief Initialises the voltage-divider sensor.
      * 
-     * @param Resistor1 The resistor connected in series with the battery (Ω).
-     * @param Resistor2 The resistor connected in parallel with the board's GPIO to the GND terminal (Ω).
-     * @param ResistorInternal The internal impedance from the GPIO to the GND terminal (measured to be 1.388MΩ).
+     * @param resistor1 The resistor connected in series with the battery (Ω).
+     * @param resistor2 The resistor connected in parallel with the board's GPIO to the GND terminal (Ω).
+     * @param resistor_internal The internal impedance from the GPIO to the GND terminal (measured to be 1.388MΩ).
      */
-    void create(int BatteryPin, float Resistor1 = 464.0, float Resistor2 = 464.0, float ResistorInternal = 1388.0 * 1000.0) {
-      batteryPin = BatteryPin;
-      pinMode(batteryPin, INPUT);
-      R1 = Resistor1;
-      R2 = Resistor2;
-      Rinternal = ResistorInternal;
-      voltageFactor = adjustVoltage(R1, R2, Rinternal);
+    void create(int battery_pin, float resistor1 = 464.0, float resistor2 = 464.0, float resistor_internal = 1388.0 * 1000.0) {
+      battery_pin = battery_pin;
+      pinMode(battery_pin, INPUT);
+      r1 = resistor1;
+      r2 = resistor2;
+      rinternal = resistor_internal;
+      voltage_factor = adjust_voltage(r1, r2, rinternal);
     }
     
     /**
      * @brief Function to calculate the voltage adjustment factor.
      * 
-     * @param Resistor1 The resistor from Battery to GPIO (Ω).
-     * @param Resistor2 The resistor from GPIO to GND (Ω).
-     * @param ResistorInternal The internal impedance from the GPIO to GND (measured to be 1.388MΩ).
+     * @param resistor1 The resistor from Battery to GPIO (Ω).
+     * @param resistor2 The resistor from GPIO to GND (Ω).
+     * @param resistor_internal The internal impedance from the GPIO to GND (measured to be 1.388MΩ).
      * 
      * @return The voltage adjustment factor.
      */
-    double adjustVoltage(double Resistor1, double Resistor2, double ResistorInternal) {
-      float Rparallel = (ResistorInternal * Resistor2) / (ResistorInternal + Resistor2);
-      voltageFactor = ((Rparallel + Resistor1) / Rparallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
-      return voltageFactor;
+    double adjust_voltage(double resistor1, double resistor2, double resistor_internal) {
+      float r_parallel = (resistor_internal * resistor2) / (resistor_internal + resistor2);
+      voltage_factor = ((r_parallel + resistor1) / r_parallel) * 0.0008058608; // 0.0008058608 converts the analogRead value into voltage within readable range (3.3/4095).
+      return voltage_factor;
     }
 
     /**
@@ -49,21 +49,21 @@ class BatteryVoltageSensor {
      * 
      * @return The voltage adjustment factor.
      */
-    double getVoltageFactor() {
-      return voltageFactor;
+    double get_voltage_factor() {
+      return voltage_factor;
     }
 
     /**
      * @brief Measures the battery voltage while accounting for the internal impedance of the I/O pin.
      * 
      * @param factor The adjustment factor to correct the voltage readings.
-     * @param batteryPin The input pin from which the voltage is being read.
+     * @param battery_pin The input pin from which the voltage is being read.
      * 
      * @return The corrected battery voltage.
      */
-    float readVoltage() {
-      float voltage = analogRead(batteryPin);
-      float corrected_voltage = voltage * voltageFactor;
+    float read_voltage() {
+      float voltage = analogRead(battery_pin);
+      float corrected_voltage = voltage * voltage_factor;
       return corrected_voltage;
     }
 
@@ -72,15 +72,15 @@ class BatteryVoltageSensor {
      * 
      * @param led The LED instance to be used.
      * @param voltage The voltage reading of the battery.
-     * @param warningOnly If true, only shows battery status when it is low.
+     * @param warning_only If true, only shows battery status when it is low.
      */
-    void displayBattery(LED &led, bool warningOnly = false) {
-      float initBrightness = led.getBrightness();
+    void display_battery(LED &led, bool warning_only = false) {
+      float init_brightness = led.getBrightness();
       led.setBrightness(0);
       
-      float voltage = readVoltage();
+      float voltage = read_voltage();
       if (voltage > 3.1) {
-          if (warningOnly) {return;} // Displays nothing if 'warningOnly' is true
+          if (warning_only) {return;} // Displays nothing if 'warning_only' is true
           led.set(GREEN);
 
       } else if (voltage >= 2.8 && voltage <= 3.1) {
@@ -90,11 +90,11 @@ class BatteryVoltageSensor {
           led.set(RED);
       }
       
-      led.fadeUp(200, initBrightness);
+      led.fadeUp(200, init_brightness);
       delay(900);
       led.fadeDown(300);
       led.off();
-      led.setBrightness(initBrightness);
+      led.setBrightness(init_brightness);
       delay(200);
   }
 };
