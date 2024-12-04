@@ -97,9 +97,9 @@ void setup() {
 
   // SD CARD
   while (!sdMount(SCK, MISO, MOSI, CS)) {
-    thinking(led);
+    showThinking(led);
   } 
-  confirm(led);
+  confirmAction(led);
 }
 
 void loop() {

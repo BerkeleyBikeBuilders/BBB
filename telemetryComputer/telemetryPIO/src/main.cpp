@@ -80,12 +80,12 @@ void setup() {
   // USER INTERFACE
   led.create(RPIN, GPIN, BPIN);
   led.calibrateBrightness(0.05F);
-  button.create(BUTTONPIN, led);
-  button.customiseButtonMessage(startMessage, stopMessage, resumeMessage, pauseMessage); // The messages will be written into the csv file.
+  button.initialize(BUTTONPIN, led);
+  button.setCustomMessages(startMessage, stopMessage, resumeMessage, pauseMessage); // The messages will be written into the csv file.
 
   // POWER SUPPLY
   battery.create(batteryPin);
-  battery.displayBattery(led); // Shows battery status when turned on.
+  battery.display_battery(led); // Shows battery status when turned on.
 
   // Sleep:
   rtc_gpio_deinit((gpio_num_t) BUTTONPIN); // Revert the rtc_GPIO wake up pin back to a normal (digital?) GPIO.
@@ -98,15 +98,15 @@ void setup() {
       pinMode(pin, INPUT);
   }
   while (!sdMount(SCK, MISO, MOSI, CS)) {
-    thinking(led);
+    showThinking(led);
   } 
-  confirm(led);
+  confirmAction(led);
 }
 
 void loop() {
   // Add a delay to prevent too much output (optional)
   delay(DELAY);
-  Serial.println(button.buttonReading());
+  Serial.println(button.readButtonState());
 
   //CSV file for one strain gauge will need to adjust for multiple gauges
   if (button.isRecording()) {

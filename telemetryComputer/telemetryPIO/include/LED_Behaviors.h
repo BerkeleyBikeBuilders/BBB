@@ -16,7 +16,6 @@ void startRecording(LED &led) {
     led.set(GREEN);
     led.setBrightness(0.0);
     led.fadeUp(300, initBrightness);
-
     led.setBrightness(initBrightness);
 }
 
@@ -88,7 +87,7 @@ void confirmAction(LED &led) {
  * 
  * @param led The LED instance to control.
  */
-void showSleepAnimation(LED &led) {
+void sleep(LED &led) {
     int initBrightness = led.getBrightness();
     led.changeColour(500, WHITE);
 
