@@ -8,7 +8,7 @@ This repository contains the HW and FW related to the ESP32 telemetry computer V
    
     Go to the folder you want to clone to, and:
     ```bash
-    git clone https://github.com/pizzamouse/BBB-Software-Things.git
+    git clone https://github.com/BerkeleyBikeBuilders/TelemetryComputer.git
 
 
 3. Install IDE:
