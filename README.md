@@ -1,15 +1,7 @@
-# Bike Builders of Berkeley Software (and Hardware) Things
+# Telemetry Computer
 
 ## Description
-Hello! This is a directory for code and EE-related hardware created for projects at the Bike Builders of Berkeley. The current projects are:
-
- - ESP32 Telemetry Computer Fall 2023~
-
-## Projects
-
-* ESP32 Telemetry Computer
-* Carbon Fibre Tube Winder V.2
-* Bike Builders of Berkeley Club Website
+This repository contains the HW and FW related to the ESP32 telemetry computer V1 (Fall 2023 - Fall 2024)
 
 ## Installation
 1. Clone the repository:
