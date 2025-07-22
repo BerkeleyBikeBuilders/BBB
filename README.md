@@ -9,6 +9,7 @@ Hello! This is a directory for code and EE-related hardware created for projects
 
 * ESP32 Telemetry Computer
 * Carbon Fibre Tube Winder V.2
+* Bike Builders of Berkeley Club Website
 
 ## Installation
 1. Clone the repository:
